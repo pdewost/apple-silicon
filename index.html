@@ -85,9 +85,10 @@
     }
 
     /* reliable zebra striping applied inside .rows wrapper */
-.rows .row:nth-child(odd)  { --row-bg: #fff; }
-.rows .row:nth-child(even) { --row-bg: #eee; }
-
+    .rows .row:nth-child(odd)  { --row-bg: #fff; }
+    .rows .row:nth-child(even) { --row-bg: #eee; }
+    .rows .row { background-color: var(--row-bg); }
+    
     /* Tooltip styling */
     .cell[data-tooltip] { cursor: pointer; position: relative; }
     .cell[data-tooltip]::after{
