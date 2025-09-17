@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Apple Silicon Saga</title>
-  <!-- Load Roboto font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet" />
-  
   <style>
     * { box-sizing: border-box; }
     body {
@@ -22,21 +20,23 @@
       font-size: 2em;
       color: #222;
     }
+
     .timeline-container {
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       padding-bottom: 20px;
       position: relative;
-      /* Allow tooltips to be visible even if they extend beyond container */
-      overflow: visible;
+      overflow: visible; /* allow tooltips */
     }
-    /* Grid: fixed first column (120px) plus 16 columns (120px each) = 17 columns total */
-    .header-row, .row {
+
+    /* grid: 1 fixed first col + 16 years = 17 columns */
+    .header-row, .rows .row {
       display: grid;
       grid-template-columns: 120px repeat(16, 120px);
       grid-auto-rows: minmax(50px, auto);
     }
+
     /* Header row styling */
     .header-row .cell {
       padding: 8px;
@@ -56,75 +56,70 @@
       padding-left: 10px;
       position: sticky;
       left: 0;
+      top: 0;
       z-index: 11;
     }
-    /* Data rows styling */
-    .row .cell {
+
+    /* Data rows styling (cells) */
+    .rows .row .cell {
       padding: 8px;
       text-align: center;
       border: 1px solid #ddd;
       font-size: 18px;
       font-weight: 300;
       white-space: nowrap;
-      background-color: inherit;
       position: relative;
+      background: transparent;
     }
-    .row .cell.first-col {
+
+    /* FIRST COLUMN: left-aligned and sticky */
+    .rows .row .cell.first-col {
       font-weight: 700;
       font-size: 20px;
-      text-align: right;
-      padding-right: 10px;
+      text-align: left;         /* <-- left-justify first column text */
+      padding-left: 10px;
       position: sticky;
       left: 0;
       z-index: 9;
+      background-clip: padding-box; /* ensure sticky cell overlays correctly */
     }
-    .row.white { background-color: #fff; }
-    .row.grey  { background-color: #eee; }
-    /* Enhanced tooltip styling */
-    .cell[data-tooltip] {
-      cursor: pointer;
-      position: relative;
-    }
-    .cell[data-tooltip]::after {
+
+    /* reliable zebra striping applied inside .rows wrapper */
+    .rows .row:nth-child(odd)  { background-color: #fff; }
+    .rows .row:nth-child(even) { background-color: #eee; }
+
+    /* Tooltip styling */
+    .cell[data-tooltip] { cursor: pointer; position: relative; }
+    .cell[data-tooltip]::after{
       content: attr(data-tooltip);
       position: absolute;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0,0,0,0.85);
       color: #fff;
       padding: 8px 10px;
       border-radius: 4px;
       white-space: pre-line;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s ease-in-out;
-      z-index: 20;
-      text-align: center;
-      max-height: 300px;
-      /* Ensure tooltip does not exceed viewport width */
+      transition: opacity .18s ease-in-out;
+      z-index: 40;
+      text-align: left;
+      max-height: 320px;
       max-width: calc(100vw - 20px);
-      /* Use clamp() to keep the left edge within boundaries:
-         minimum 10px from left, maximum so that the tooltip's right edge is 10px from viewport right */
       left: clamp(10px, 50%, calc(100vw - 370px));
       top: 100%;
       transform: translateY(8px);
       overflow-y: auto;
     }
-    /* For cells in the last row, display tooltip above */
-    .row:last-child .cell[data-tooltip]:not(.first-col)::after {
+    .cell[data-tooltip]:hover::after{ opacity: 1; }
+
+    /* If a tooltip comes from the last (visual) row, display above */
+    .rows .row:last-child .cell[data-tooltip]::after {
       bottom: 100%;
       top: auto;
       transform: translateY(-8px);
     }
-    /* For cells in the first row (of the table body), tooltip appears below */
-    .row:first-child .cell[data-tooltip]:not(.first-col)::after {
-      top: 100%;
-      bottom: auto;
-      transform: translateY(8px);
-    }
-    /* Make tooltip visible on hover */
-    .cell[data-tooltip]:hover::after {
-      opacity: 1;
-    }
-    /* Legend styling */
+
+    /* Legend and references styling preserved */
     .legend {
       margin-top: 24px;
       padding: 16px;
@@ -138,330 +133,170 @@
       border: 1px solid #666;
       border-radius: 12px;
     }
-    .legend-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background-color: #f5f5f5; border-radius: 6px; }
-    .legend-emoji { font-size: 24px; }
-    .legend-text { font-size: 14px; color: #333; font-weight: 500; white-space: nowrap; }
-    /* References styling */
-    .references { max-width: 800px; margin: 20px auto; font-size: 14px; line-height: 1.4; }
-    .references ul { padding-left: 20px; }
-    .references li { margin-bottom: 6px; }
-    .references a { color: #0066cc; text-decoration: none; }
-    .references a:hover { text-decoration: underline; }
-    @media (max-width: 800px) {
-      .header-row, .row { grid-template-columns: 100px repeat(16, 120px); }
-      .cell[data-tooltip]::after { min-width: 200px; max-width: calc(100vw - 20px); }
-      .legend { grid-template-columns: repeat(3, 1fr); }
+    .legend-item { display:flex; align-items:center; gap:8px; padding:6px 10px; background:#f5f5f5; border-radius:6px; }
+    .legend-emoji { font-size:24px; }
+    .legend-text { font-size:14px; color:#333; font-weight:500; white-space:nowrap; }
+
+    .references { max-width:800px; margin:20px auto; font-size:14px; line-height:1.4; }
+    .references ul { padding-left:20px; }
+    .references li { margin-bottom:6px; }
+    .references a { color:#0066cc; text-decoration:none; }
+    .references a:hover { text-decoration:underline; }
+
+    @media (max-width:800px){
+      .header-row, .rows .row { grid-template-columns: 100px repeat(16,120px); }
+      .cell[data-tooltip]::after { min-width:200px; max-width: calc(100vw - 20px); }
+      .legend { grid-template-columns: repeat(3,1fr); }
     }
   </style>
 </head>
 <body>
   <h1>The Apple Silicon Saga</h1>
+
   <div class="timeline-container">
-    <!-- Header Row -->
+    <!-- header -->
     <div class="header-row">
       <div class="cell first-col">Series</div>
-      <div class="cell">2010</div>
-      <div class="cell">2011</div>
-      <div class="cell">2012</div>
-      <div class="cell">2013</div>
-      <div class="cell">2014</div>
-      <div class="cell">2015</div>
-      <div class="cell">2016</div>
-      <div class="cell">2017</div>
-      <div class="cell">2018</div>
-      <div class="cell">2019</div>
-      <div class="cell">2020</div>
-      <div class="cell">2021</div>
-      <div class="cell">2022</div>
-      <div class="cell">2023</div>
-      <div class="cell">2024</div>
-      <div class="cell">2025</div>
-    </div>
-    
-    <!-- Series A -->
-    <div class="row white">
-      <div class="cell first-col" data-tooltip="Series A (SoC for iPhone and iPad)
-Apple A4 (2010) – First mobile chip by Apple [1].
-Apple A5 (2011) – Introduced with iPad 2 then used in iPhone 4s [1].
-Apple A6 (2012) – Used in iPhone 5 [1].
-Apple A7 (2013) – Debuted with iPhone 5s, first 64-bit chip [1].
-Apple A8 (2014) – Powers iPhone 6/6 Plus and used in the original HomePod [1].
-Apple A9 (2015) – For iPhone 6s/6s Plus, iPhone SE (1st gen) and iPad 5 [1].
-Apple A10 Fusion (2016) – In iPhone 7/7 Plus [1].
-Apple A11 Bionic (2017) – In iPhone 8/8 Plus and iPhone X [1].
-Apple A12 Bionic (2018) – In iPhone XR/XS/XS Max and others [1].
-Apple A13 Bionic (2019) – Neural Engine enhanced [1].
-Apple A14 Bionic (2020) – In iPad Air 4 and iPhone 12 [1].
-Apple A15 Bionic (2021) – In iPhone 13 and iPad mini 6 [1].
-Apple A16 Bionic (2022) – Launched with iPhone 14 Pro [1].
-Apple A17 Pro (2023) – First 3 nm chip with ray tracing GPU [1].
-Apple A18 (2024) – In iPhone 16/16 Plus [1].
-Apple A19 (2025) – New generation announced Sep 9, 2025; flagship SoC for the iPhone 17 family [8].">
-        <strong>Series A</strong>
-      </div>
-      <div class="cell" data-tooltip="Apple A4 (2010) – First mobile chip by Apple [1]."><strong>A4</strong><br>📱📲🎵📺</div>
-      <div class="cell" data-tooltip="Apple A5 (2011) – Introduced with iPad 2 [1]."><strong>A5</strong><br>📱📲🎵</div>
-      <div class="cell" data-tooltip="Apple A6 (2012) – Used in iPhone 5 [1]."><strong>A6</strong><br>📱</div>
-      <div class="cell" data-tooltip="Apple A7 (2013) – Debuted with iPhone 5s [1]."><strong>A7</strong><br>📱📲</div>
-      <div class="cell" data-tooltip="Apple A8 (2014) – Powers iPhone 6/6 Plus and HomePod [1]."><strong>A8</strong><br>📱🔊</div>
-      <div class="cell" data-tooltip="Apple A9 (2015) – For iPhone 6s/6s Plus and iPad 5 [1]."><strong>A9</strong><br>📱📲</div>
-      <div class="cell" data-tooltip="Apple A10 Fusion (2016) – In iPhone 7/7 Plus [1]."><strong>A10</strong><br>📱📲📺</div>
-      <div class="cell" data-tooltip="Apple A11 Bionic (2017) – In iPhone 8/8 Plus and iPhone X [1]."><strong>A11</strong><br>📱</div>
-      <div class="cell" data-tooltip="Apple A12 Bionic (2018) – In iPhone XR/XS/XS Max [1]."><strong>A12</strong><br>📱📲🎵📺</div>
-      <div class="cell" data-tooltip="Apple A13 Bionic (2019) – Neural Engine enhanced [1]."><strong>A13</strong><br>📱</div>
-      <div class="cell" data-tooltip="Apple A14 Bionic (2020) – In iPad Air 4 and iPhone 12 [1]."><strong>A14</strong><br>📱📲</div>
-      <div class="cell" data-tooltip="Apple A15 Bionic (2021) – In iPhone 13 and iPad mini 6 [1]."><strong>A15</strong><br>📱📲</div>
-      <div class="cell" data-tooltip="Apple A16 Bionic (2022) – Launched with iPhone 14 Pro [1]."><strong>A16</strong><br>📱</div>
-      <div class="cell" data-tooltip="Apple A17 Pro (2023) – First 3 nm chip with ray tracing GPU [1]."><strong>A17</strong><br>📱</div>
-      <div class="cell" data-tooltip="Apple A18 (2024) – In iPhone 16/16 Plus [1]."><strong>A18</strong><br>📱</div>
-      <div class="cell" data-tooltip="Apple A19 (2025) – Announced Sep 9, 2025; flagship for the iPhone 17 family [8]."><strong>A19</strong><br>📱</div>
-    </div>
-    
-    <!-- Series S -->
-    <div class="row grey">
-      <div class="cell first-col" data-tooltip="Apple S1 (2015) – First chip for Apple Watch [2].
-Apple S2 (2016) – Introduced with Apple Watch Series 2 [2].
-Apple S3 (2017) – For Apple Watch Series 3 (cellular) [2].
-Apple S4 (2018) – 64-bit CPU twice as fast with ECG [2].
-Apple S5 (2019) – Always-on display; used in HomePod mini [2].
-Apple S6 (2020) – Adds an always-on altimeter [2].
-Apple S7 (2021) – For Apple Watch Series 7 and HomePod 2 [2].
-Apple S8 (2022) – For Apple Watch Series 8 and Watch SE (2nd gen) [2].
-Apple S9 (2023) – Latest chip for Apple Watch Series 9 [2].
-Apple S10 (2025) – New S-series silicon introduced for the 2025 Watch lineup (Series 11 / Ultra 3 / SE 3) [11].">
-        <strong>Series S</strong>
-      </div>
-      <!-- Blank for 2010–2014 -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2015: S1 new -->
-      <div class="cell" data-tooltip="Apple S1 (2015) – First chip for Apple Watch [2]."><strong>S1</strong><br>⌚</div>
-      <!-- 2016: S2 new -->
-      <div class="cell" data-tooltip="Apple S2 (2016) – For Apple Watch Series 2 [2]."><strong>S2</strong><br>⌚</div>
-      <!-- 2017: S3 new -->
-      <div class="cell" data-tooltip="Apple S3 (2017) – For Apple Watch Series 3 [2]."><strong>S3</strong><br>⌚</div>
-      <!-- 2018: S4 new -->
-      <div class="cell" data-tooltip="Apple S4 (2018) – 64-bit CPU twice as fast with ECG [2]."><strong>S4</strong><br>⌚</div>
-      <!-- 2019: S5 new -->
-      <div class="cell" data-tooltip="Apple S5 (2019) – Always-on display; used in HomePod mini [2]."><strong>S5</strong><br>⌚🔊</div>
-      <!-- 2020: S6 new -->
-      <div class="cell" data-tooltip="Apple S6 (2020) – Adds an always-on altimeter [2]."><strong>S6</strong><br>⌚</div>
-      <!-- 2021: S7 new -->
-      <div class="cell" data-tooltip="Apple S7 (2021) – For Apple Watch Series 7 and HomePod 2 [2]."><strong>S7</strong><br>⌚🔊</div>
-      <!-- 2022: S8 new -->
-      <div class="cell" data-tooltip="Apple S8 (2022) – For Apple Watch Series 8 and Watch SE (2nd gen) [2]."><strong>S8</strong><br>⌚</div>
-      <!-- 2023: S9 new -->
-      <div class="cell" data-tooltip="Apple S9 (2023) – Latest chip for Apple Watch Series 9 [2]."><strong>S9</strong><br>⌚</div>
-      <!-- 2024: Duplicate S9 (plain) -->
-      <div class="cell" data-tooltip="Same as 2023: Apple S9 [2].">S9<br>⌚</div>
-      <!-- 2025: S10 new -->
-      <div class="cell" data-tooltip="Apple S10 (2025) – New watch SoC for Series 11/Ultra 3/SE3 [11]."><strong>S10</strong><br>⌚</div>
-    </div>
-    
-    <!-- Series W -->
-    <div class="row white">
-      <div class="cell first-col" data-tooltip="Apple W1 (Dec 2016) – First Bluetooth chip for simplified pairing in AirPods/Beats [3].
-Apple W2 (Sept 2017) – For Apple Watch Series 3 [3].
-Apple W3 (Sept 2018) – For Apple Watch Series 4 and later [3].">
-        <strong>Series W</strong>
-      </div>
-      <!-- Blank for 2010–2015 -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2016: W1 new -->
-      <div class="cell" data-tooltip="Apple W1 (Dec 2016) – For AirPods 1st gen [3]."><strong>W1</strong><br>🎧🎵</div>
-      <!-- 2017: W2 new -->
-      <div class="cell" data-tooltip="Apple W2 (Sept 2017) – For Apple Watch Series 3 [3]."><strong>W2</strong><br>🎧🎵</div>
-      <!-- 2018: W3 new -->
-      <div class="cell" data-tooltip="Apple W3 (Sept 2018) – For Apple Watch Series 4 and later [3]."><strong>W3</strong><br>🎧🎵⌚</div>
-      <!-- 2019–2025: Duplicate W3 (plain) -->
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-      <div class="cell" data-tooltip="Same as 2018: Apple W3 [3].">🎧</div>
-    </div>
-    
-    <!-- Series U -->
-    <div class="row grey">
-      <div class="cell first-col" data-tooltip="Apple U1 (Sept 2019) – UWB chip for precise localization, used in iPhone 11+, Apple Watch Series 6/7/8, HomePod mini and AirTag [4].
-Apple U2 (Sept 2023) – Second generation with triple range, also used in Apple Watch Series 9, Watch Ultra 2, AirTags and HomePods [4].">
-        <strong>Series U</strong>
-      </div>
-      <!-- Blank for 2010–2018 -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2019: U1 new -->
-      <div class="cell" data-tooltip="Apple U1 (Sept 2019) – Pioneer UWB chip [4]."><strong>U1</strong><br>📱⌚🏷️🔊</div>
-      <!-- 2020–2022: Duplicate U1 (plain) -->
-      <div class="cell" data-tooltip="Same as 2019: Apple U1 [4].">U1<br>📱⌚🏷️🔊</div>
-      <div class="cell" data-tooltip="Same as 2019: Apple U1 [4].">U1<br>📱⌚🏷️🔊</div>
-      <div class="cell" data-tooltip="Same as 2019: Apple U1 [4].">U1<br>📱⌚🏷️🔊</div>
-      <!-- 2023: U2 new -->
-      <div class="cell" data-tooltip="Apple U2 (Sept 2023) – Offers triple range and powers AirTags &amp; HomePods [4]."><strong>U2</strong><br>📱⌚🏷️🔊</div>
-      <!-- 2024–2025: Duplicate U2 (plain) -->
-      <div class="cell" data-tooltip="Same as 2023: Apple U2 [4].">U2<br>📱⌚🏷️🔊</div>
-      <div class="cell" data-tooltip="Same as 2023: Apple U2 [4].">U2<br>📱⌚🏷️🔊</div>
-    </div>
-    
-    <!-- Series H -->
-    <div class="row white">
-      <div class="cell first-col" data-tooltip="Apple H1 (Mar 2019) – Audio chip for AirPods, ensuring stable connectivity [5].
-Apple H2 (Sept 2022) – Second generation with improved noise reduction [5].
-Apple H3 (2025) – New audio SoC introduced with AirPods Pro 3 (Sep 9, 2025) for improved ANC, sensing and power efficiency [10].">
-        <strong>Series H</strong>
-      </div>
-      <!-- Blank for 2010–2018 -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2019: H1 new -->
-      <div class="cell" data-tooltip="Apple H1 (Mar 2019) – For 2019 AirPods [5]."><strong>H1</strong><br>🎧</div>
-      <!-- 2020–2021: Duplicate H1 (plain) -->
-      <div class="cell" data-tooltip="Same as 2019: Apple H1 [5].">H1<br>🎧</div>
-      <div class="cell" data-tooltip="Same as 2019: Apple H1 [5].">H1<br>🎧</div>
-      <!-- 2022: H2 new -->
-      <div class="cell" data-tooltip="Apple H2 (Sept 2022) – For improved noise reduction [5]."><strong>H2</strong><br>🎧</div>
-      <!-- 2023–2024: Duplicate H2 (plain) -->
-      <div class="cell" data-tooltip="Same as 2022: Apple H2 [5].">H2<br>🎧</div>
-      <div class="cell" data-tooltip="Same as 2022: Apple H2 [5].">H2<br>🎧</div>
-      <!-- 2025: H3 new -->
-      <div class="cell" data-tooltip="Apple H3 (2025) – Introduced with AirPods Pro 3; improved noise cancellation, sensing and power efficiency [10]."><strong>H3</strong><br>🎧</div>
-    </div>
-    
-    <!-- Series M -->
-    <div class="row grey">
-      <div class="cell first-col" data-tooltip="Series M (Apple Silicon for Mac &amp; iPad)
-Apple M1 (2020) – First Apple Silicon for Mac, launched in 2020 [6].
-Apple M2 (2022) – Second generation, also used in Vision Pro [6].
-Apple M3 (2023) – Third generation (3 nm) [6].
-Apple M3 Ultra (Mar 2025) – High-end Ultra variant introduced for Mac Studio and pro desktops [12].
-Apple M4 (2025) – Shipped in the new MacBook Air (Mar 2025) and other updated Macs [13].">
-        <strong>Series M</strong>
-      </div>
-      <!-- Blank for 2010–2019 (10 cells) -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2020: M1 new -->
-      <div class="cell" data-tooltip="Apple M1 (2020) – First Apple Silicon for Mac and iPad [6]."><strong>M1</strong><br>💻📲</div>
-      <!-- 2021: Duplicate M1 (plain) -->
-      <div class="cell" data-tooltip="Same as 2020: Apple M1 [6].">M1<br>💻📲</div>
-      <!-- 2022: M2 new -->
-      <div class="cell" data-tooltip="Apple M2 (2022) – Second generation, also used in Vision Pro [6]."><strong>M2</strong><br>💻📲🥽</div>
-      <!-- 2023: M3 new -->
-      <div class="cell" data-tooltip="Apple M3 (2023) – Third generation (3 nm) [6]."><strong>M3</strong><br>💻</div>
-      <!-- 2024: Duplicate M3 (plain) -->
-      <div class="cell" data-tooltip="Same as 2023: Apple M3 [6].">M3<br>💻</div>
-      <!-- 2025: M4 / M3 Ultra presence -->
-      <div class="cell" data-tooltip="M3 Ultra / M4 (2025) – M3 Ultra introduced (Mar 2025) for Mac Studio / pro line; M4 powers updated MacBook Air (Mar 2025) [12][13]."><strong>M4</strong><br>💻📲</div>
+      <div class="cell">2010</div><div class="cell">2011</div><div class="cell">2012</div><div class="cell">2013</div>
+      <div class="cell">2014</div><div class="cell">2015</div><div class="cell">2016</div><div class="cell">2017</div>
+      <div class="cell">2018</div><div class="cell">2019</div><div class="cell">2020</div><div class="cell">2021</div>
+      <div class="cell">2022</div><div class="cell">2023</div><div class="cell">2024</div><div class="cell">2025</div>
     </div>
 
-    <!-- Series N (new networking silicon row) -->
-    <div class="row white">
-      <div class="cell first-col" data-tooltip="Series N (Networking silicon)
-Apple N1 (2025) – New Apple networking SoC (Wi-Fi 7, Bluetooth 6, Thread) introduced with the 2025 iPhone lineup; improves integration and offloads networking tasks from main SoC [8][14].">
-        <strong>Series N</strong>
+    <!-- wrap all data rows so zebra striping is consistent -->
+    <div class="rows">
+      <!-- Series A -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="Series A (SoC for iPhone and iPad)
+Apple A4 (2010) – First mobile chip by Apple [1]. ..."> <strong>Series A</strong></div>
+        <div class="cell" data-tooltip="Apple A4 (2010) – First mobile chip by Apple [1]."><strong>A4</strong><br>📱📲🎵📺</div>
+        <div class="cell" data-tooltip="Apple A5 (2011) – ..."><strong>A5</strong><br>📱📲🎵</div>
+        <div class="cell" data-tooltip="Apple A6 (2012) – ..."><strong>A6</strong><br>📱</div>
+        <div class="cell" data-tooltip="Apple A7 (2013) – ..."><strong>A7</strong><br>📱📲</div>
+        <div class="cell" data-tooltip="Apple A8 (2014) – ..."><strong>A8</strong><br>📱🔊</div>
+        <div class="cell" data-tooltip="Apple A9 (2015) – ..."><strong>A9</strong><br>📱📲</div>
+        <div class="cell" data-tooltip="Apple A10 (2016) – ..."><strong>A10</strong><br>📱📲📺</div>
+        <div class="cell" data-tooltip="Apple A11 (2017) – ..."><strong>A11</strong><br>📱</div>
+        <div class="cell" data-tooltip="Apple A12 (2018) – ..."><strong>A12</strong><br>📱📲🎵📺</div>
+        <div class="cell" data-tooltip="Apple A13 (2019) – ..."><strong>A13</strong><br>📱</div>
+        <div class="cell" data-tooltip="Apple A14 (2020) – ..."><strong>A14</strong><br>📱📲</div>
+        <div class="cell" data-tooltip="Apple A15 (2021) – ..."><strong>A15</strong><br>📱📲</div>
+        <div class="cell" data-tooltip="Apple A16 (2022) – ..."><strong>A16</strong><br>📱</div>
+        <div class="cell" data-tooltip="Apple A17 (2023) – ..."><strong>A17</strong><br>📱</div>
+        <div class="cell" data-tooltip="Apple A18 (2024) – ..."><strong>A18</strong><br>📱</div>
+        <div class="cell" data-tooltip="Apple A19 (2025) – ..."><strong>A19</strong><br>📱</div>
       </div>
-      <!-- Blank for 2010–2024 (15 cells) -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2025: N1 new -->
-      <div class="cell" data-tooltip="Apple N1 (2025) – Networking silicon introduced Sep 9, 2025; handles Wi-Fi 7/Bluetooth 6/Thread and improves radio integration [8][14]."><strong>N1</strong><br>📱</div>
-    </div>
-    
-    <!-- Series R -->
-    <div class="row white">
-      <div class="cell first-col" data-tooltip="Apple R1 (2024) – Dedicated chip for Apple Vision Pro, processing sensor data for spatial computing [7].">
-        <strong>Series R</strong>
+
+      <!-- Series S -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="S-series summary..."><strong>Series S</strong></div>
+        <!-- 2010-2014 empty -->
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="S1 (2015)"><strong>S1</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S2 (2016)"><strong>S2</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S3 (2017)"><strong>S3</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S4 (2018)"><strong>S4</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S5 (2019)"><strong>S5</strong><br>⌚🔊</div>
+        <div class="cell" data-tooltip="S6 (2020)"><strong>S6</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S7 (2021)"><strong>S7</strong><br>⌚🔊</div>
+        <div class="cell" data-tooltip="S8 (2022)"><strong>S8</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S9 (2023)"><strong>S9</strong><br>⌚</div>
+        <div class="cell" data-tooltip="S9 (2024) duplicate">S9<br>⌚</div>
+        <div class="cell" data-tooltip="S10 (2025)"><strong>S10</strong><br>⌚</div>
       </div>
-      <!-- Blank for 2010–2023 (14 cells) -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2024: R1 new -->
-      <div class="cell" data-tooltip="Apple R1 (2024) – Dedicated to spatial computing in Vision Pro [7]."><strong>R1</strong><br>🥽</div>
-      <!-- 2025: Duplicate R1 (plain) -->
-      <div class="cell" data-tooltip="Same as 2024: Apple R1 [7].">R1<br>🥽</div>
-    </div>
-    
-    <!-- Series C -->
-    <div class="row grey">
-      <div class="cell first-col" data-tooltip="Apple C1 (2025) – First in-house 5G modem chip, launched in the iPhone 16e to improve energy efficiency and cellular integration [7].
-Apple C1X (2025) – Updated modem introduced with new iPhone models (Sep 9, 2025); claims higher throughput and lower power than C1 [9].">
-        <strong>Series C</strong>
+
+      <!-- Series W -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="W-series summary..."><strong>Series W</strong></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div>
+        <div class="cell" data-tooltip="W1 (2016)"><strong>W1</strong><br>🎧🎵</div>
+        <div class="cell" data-tooltip="W2 (2017)"><strong>W2</strong><br>🎧🎵</div>
+        <div class="cell" data-tooltip="W3 (2018)"><strong>W3</strong><br>🎧🎵⌚</div>
+        <div class="cell" data-tooltip="W3 (2019) duplicate">🎧</div>
+        <div class="cell" data-tooltip="W3 (2020) duplicate">🎧</div>
+        <div class="cell" data-tooltip="W3 (2021) duplicate">🎧</div>
+        <div class="cell" data-tooltip="W3 (2022) duplicate">🎧</div>
+        <div class="cell" data-tooltip="W3 (2023) duplicate">🎧</div>
+        <div class="cell" data-tooltip="W3 (2024) duplicate">🎧</div>
+        <div class="cell" data-tooltip="W3 (2025) duplicate">🎧</div>
       </div>
-      <!-- Blank for 2010–2024 (15 cells) -->
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <div class="cell"></div>
-      <!-- 2025: C1 / C1X presence -->
-      <div class="cell" data-tooltip="Apple C1X (2025) – Updated in-house modem shipping in the 2025 iPhone Air / iPhone 17 family [9]."><strong>C1X</strong><br>📱</div>
-    </div>
-  </div>
-  
+
+      <!-- Series U -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="U-series summary..."><strong>Series U</strong></div>
+        <!-- 2010-2018 empty -->
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="U1 (2019)"><strong>U1</strong><br>📱⌚🏷️🔊</div>
+        <div class="cell" data-tooltip="U1 (2020 duplicate)">U1<br>📱⌚🏷️🔊</div>
+        <div class="cell" data-tooltip="U1 (2021 duplicate)">U1<br>📱⌚🏷️🔊</div>
+        <div class="cell" data-tooltip="U1 (2022 duplicate)">U1<br>📱⌚🏷️🔊</div>
+        <div class="cell" data-tooltip="U2 (2023)"><strong>U2</strong><br>📱⌚🏷️🔊</div>
+        <div class="cell" data-tooltip="U2 (2024 duplicate)">U2<br>📱⌚🏷️🔊</div>
+        <div class="cell" data-tooltip="U2 (2025 duplicate)">U2<br>📱⌚🏷️🔊</div>
+      </div>
+
+      <!-- Series H -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="H-series summary..."><strong>Series H</strong></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="H1 (2019)"><strong>H1</strong><br>🎧</div>
+        <div class="cell" data-tooltip="H1 (2020 duplicate)">H1<br>🎧</div>
+        <div class="cell" data-tooltip="H1 (2021 duplicate)">H1<br>🎧</div>
+        <div class="cell" data-tooltip="H2 (2022)"><strong>H2</strong><br>🎧</div>
+        <div class="cell" data-tooltip="H2 (2023 duplicate)">H2<br>🎧</div>
+        <div class="cell" data-tooltip="H2 (2024 duplicate)">H2<br>🎧</div>
+        <div class="cell" data-tooltip="H3 (2025)"><strong>H3</strong><br>🎧</div>
+      </div>
+
+      <!-- Series M -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="M-series summary..."><strong>Series M</strong></div>
+        <!-- 2010-2019 empty cells -->
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="M1 (2020)"><strong>M1</strong><br>💻📲</div>
+        <div class="cell" data-tooltip="M1 (2021 duplicate)">M1<br>💻📲</div>
+        <div class="cell" data-tooltip="M2 (2022)"><strong>M2</strong><br>💻📲🥽</div>
+        <div class="cell" data-tooltip="M3 (2023)"><strong>M3</strong><br>💻</div>
+        <div class="cell" data-tooltip="M3 (2024 duplicate)">M3<br>💻</div>
+        <div class="cell" data-tooltip="M4 / M3 Ultra (2025)"><strong>M4</strong><br>💻📲</div>
+      </div>
+
+      <!-- Series N (new) -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="Series N (Networking silicon) summary..."><strong>Series N</strong></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="N1 (2025)"><strong>N1</strong><br>📱</div>
+        <div class="cell" data-tooltip="N1 (2025 duplicate)">N1<br>📱</div>
+      </div>
+
+      <!-- Series R -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="Series R (spatial/vision coprocessors)..."><strong>Series R</strong></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="R1 (2024)"><strong>R1</strong><br>🥽</div>
+        <div class="cell" data-tooltip="R1 (2025 duplicate)">R1<br>🥽</div>
+      </div>
+
+      <!-- Series C -->
+      <div class="row">
+        <div class="cell first-col" data-tooltip="Series C (modem family) summary..."><strong>Series C</strong></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell" data-tooltip="C1 / C1X (2025)"><strong>C1X</strong><br>📱</div>
+        <div class="cell" data-tooltip="C1X (2025 duplicate)">C1X<br>📱</div>
+      </div>
+    </div> <!-- .rows -->
+  </div> <!-- .timeline-container -->
+
   <div class="legend">
     <div class="legend-item"><span class="legend-emoji">📱</span><span class="legend-text">iPhone</span></div>
     <div class="legend-item"><span class="legend-emoji">📲</span><span class="legend-text">iPad</span></div>
@@ -474,26 +309,26 @@ Apple C1X (2025) – Updated modem introduced with new iPhone models (Sep 9, 202
     <div class="legend-item"><span class="legend-emoji">🏷️</span><span class="legend-text">AirTag</span></div>
     <div class="legend-item"><span class="legend-emoji">🥽</span><span class="legend-text">Vision Pro</span></div>
   </div>
-  
+
   <hr>
-  
+
   <div class="references">
     <p><strong>References (as of 2025-09-17):</strong></p>
     <ul>
-      <li>[1] <a href="https://apple.fandom.com" target="_blank" id="ref1">APPLE.FANDOM.COM</a> – Technical details on A-series SoCs.</li>
-      <li>[2] <a href="https://blogdoiiphone.com" target="_blank" id="ref2">BLOGDOIPHONE.COM</a> – Analyses of the S-series for Apple Watch.</li>
-      <li>[3] <a href="https://www.qualcomm.com" target="_blank" id="ref3">QUALCOMM.COM</a> – Historical information on modems and related tech.</li>
-      <li>[4] <a href="https://www.broadcom.com" target="_blank" id="ref4">BROADCOM.COM</a> – Data on connectivity components.</li>
-      <li>[5] <a href="https://www.st.com" target="_blank" id="ref5">STMICRO.COM</a> – Sensor information used across mobile devices.</li>
-      <li>[6] <a href="https://www.nxp.com" target="_blank" id="ref6">NXP.COM</a> – NFC technology details.</li>
-      <li>[7] <a href="https://www.apple.com" target="_blank" id="ref7">APPLE.COM</a> – Apple official site &amp; older product pages.</li>
-      <li>[8] <a href="https://www.apple.com/newsroom/2025/09/apple-debuts-iphone-17/" target="_blank">Apple — iPhone 17 (newsroom)</a> – iPhone 17 overview and chip listings (N1, A19 variants).</li>
-      <li>[9] <a href="https://www.apple.com/newsroom/2025/09/introducing-iphone-air-a-powerful-new-iphone-with-a-breakthrough-design/" target="_blank">Apple — iPhone Air (newsroom)</a> – Describes A19 Pro, N1 and the C1X modem.</li>
-      <li>[10] <a href="https://www.apple.com/newsroom/2025/09/introducing-airpods-pro-3-the-ultimate-audio-experience/" target="_blank">Apple — AirPods Pro 3 (newsroom)</a> – AirPods Pro 3 announcement (H3 audio silicon).</li>
-      <li>[11] <a href="https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/" target="_blank">Apple — Apple Watch Series 11 (newsroom)</a> – Watch lineup and S10 references.</li>
-      <li>[12] <a href="https://www.apple.com/newsroom/2025/03/apple-reveals-m3-ultra-taking-apple-silicon-to-a-new-extreme/" target="_blank">Apple — M3 Ultra (Mar 5, 2025)</a> – M3 Ultra announcement and specs.</li>
-      <li>[13] <a href="https://www.apple.com/newsroom/2025/03/apple-introduces-the-new-macbook-air-with-the-m4-chip-and-a-sky-blue-color/" target="_blank">Apple — MacBook Air with M4 (Mar 5, 2025)</a> – M4 chip details.</li>
-      <li>[14] <a href="https://www.macrumors.com/2025/09/13/apple-n1-chip-has-wi-fi-7-limitation/" target="_blank">MacRumors — N1 chip analysis (Sept 13, 2025)</a> – independent coverage/notes about N1.</li>
+      <li>[1] APPLE.FANDOM.COM – Technical details on A-series SoCs.</li>
+      <li>[2] BLOGDOIPHONE.COM – Analyses of S-series.</li>
+      <li>[3] QUALCOMM.COM – Historical info on modems.</li>
+      <li>[4] BROADCOM.COM – Connectivity components.</li>
+      <li>[5] STMICRO.COM – Sensor info.</li>
+      <li>[6] NXP.COM – NFC tech.</li>
+      <li>[7] APPLE.COM – Official announcements.</li>
+      <li>[8] Apple — iPhone 17 (newsroom)</li>
+      <li>[9] Apple — iPhone Air (newsroom)</li>
+      <li>[10] Apple — AirPods Pro 3 (newsroom)</li>
+      <li>[11] Apple — Apple Watch Series 11 (newsroom)</li>
+      <li>[12] Apple — M3 Ultra (Mar 5, 2025)</li>
+      <li>[13] Apple — MacBook Air with M4 (Mar 5, 2025)</li>
+      <li>[14] MacRumors — N1 chip analysis (Sept 13, 2025)</li>
     </ul>
   </div>
 </body>
