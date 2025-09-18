@@ -43,6 +43,7 @@
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
       position: relative;
+      padding-right: 20px; /* Fix pour colonne 2025 */
     }
 
     /* Grid: 1 fixed first col + 16 years = 17 columns */
@@ -50,6 +51,7 @@
       display: grid;
       grid-template-columns: 140px repeat(16, 120px);
       min-height: 60px;
+      width: max-content; /* Fix pour colonne 2025 */
     }
 
     /* Header row styling avec z-index cohérents */
@@ -58,6 +60,8 @@
       position: sticky;
       top: 0;
       z-index: 20;
+      width: 100%;
+      min-width: max-content; /* Fix pour colonne 2025 */
     }
     
     .header-row .cell {
@@ -107,6 +111,7 @@
       background-color: #f8f9fa; 
     }
     
+    /* Fix alignement horizontal des textes et emojis */
     .rows .row .cell {
       padding: 10px 8px;
       text-align: center;
@@ -114,14 +119,20 @@
       font-size: 16px;
       font-weight: 300;
       position: relative;
-      background-color: inherit; /* Hérite du background de la row */
+      background-color: inherit;
       display: flex;
-      flex-direction: column;
+      flex-direction: row; /* Changé de column à row */
       align-items: center;
       justify-content: center;
       gap: 4px;
       min-height: 60px;
       cursor: default;
+      flex-wrap: wrap; /* Permet le wrap si nécessaire */
+    }
+    
+    /* Exception pour Series A qui a plus de contenu */
+    .rows .row:first-child .cell:not(.first-col) {
+      flex-direction: column; /* Garde column pour Series A uniquement */
     }
     
     .rows .row .cell strong {
@@ -429,7 +440,7 @@
       </div>
 
       <div class="rows">
-        <!-- Series A -->
+        <!-- Series A (garde flex-direction: column via CSS) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series A - Application Processors
 Main SoC for iPhone and iPad
@@ -520,7 +531,7 @@ Enhanced AI capabilities
 First used in: iPhone 17 series"><strong>A19</strong><br>📱</div>
         </div>
 
-        <!-- Series S -->
+        <!-- Series S (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series S - System in Package
 Designed for Apple Watch
@@ -534,48 +545,48 @@ Integrated memory and storage"><strong>Series S</strong></div>
           <div class="cell" data-tooltip="Apple S1 (2015)
 28nm Samsung
 520 MHz ARM Cortex-A7
-First Apple Watch chip"><strong>S1</strong><br>⌚</div>
+First Apple Watch chip"><strong>S1</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S2 (2016)
 Dual-core processor
 Built-in GPS
-50% faster than S1"><strong>S2</strong><br>⌚</div>
+50% faster than S1"><strong>S2</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S3 (2017)
 Dual-core processor
 W2 wireless chip
-70% faster than S2"><strong>S3</strong><br>⌚</div>
+70% faster than S2"><strong>S3</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S4 (2018)
 64-bit dual-core
 2x faster than S3
-Larger display support"><strong>S4</strong><br>⌚</div>
+Larger display support"><strong>S4</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S5 (2019)
 Based on S4 architecture
 Compass + Always-On display
-Also in HomePod mini"><strong>S5</strong><br>⌚🔊</div>
+Also in HomePod mini"><strong>S5</strong> ⌚🔊</div>
           <div class="cell" data-tooltip="Apple S6 (2020)
 Based on A13 cores
 20% faster than S5
-Always-On altimeter"><strong>S6</strong><br>⌚</div>
+Always-On altimeter"><strong>S6</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S7 (2021)
 Same CPU as S6
 33% faster charging
-Also in HomePod mini"><strong>S7</strong><br>⌚🔊</div>
+Also in HomePod mini"><strong>S7</strong> ⌚🔊</div>
           <div class="cell" data-tooltip="Apple S8 (2022)
 Same performance as S7
 Crash detection
-Temperature sensing"><strong>S8</strong><br>⌚</div>
+Temperature sensing"><strong>S8</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S9 (2023)
 4-core Neural Engine
 On-device Siri
-Double Tap gesture"><strong>S9</strong><br>⌚</div>
+Double Tap gesture"><strong>S9</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple S9 (2024)
 Continued production
-Used in Apple Watch SE 3">S9<br>⌚</div>
+Used in Apple Watch SE 3">S9 ⌚</div>
           <div class="cell" data-tooltip="Apple S10 (2025)
 Enhanced health sensors
-Improved battery efficiency"><strong>S10</strong><br>⌚</div>
+Improved battery efficiency"><strong>S10</strong> ⌚</div>
         </div>
 
-        <!-- Series W -->
+        <!-- Series W (FIX: ajout des textes manquants) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series W - Wireless chips
 Bluetooth and WiFi connectivity
@@ -589,25 +600,25 @@ Used in AirPods and Beats"><strong>Series W</strong></div>
           <div class="cell" data-tooltip="Apple W1 (2016)
 First wireless chip
 Class 1 Bluetooth
-Used in: AirPods 1, Beats"><strong>W1</strong><br>🎧🎵</div>
+Used in: AirPods 1, Beats"><strong>W1</strong> 🎧🎵</div>
           <div class="cell" data-tooltip="Apple W2 (2017)
 WiFi support added
 50% more efficient
-Used in: Apple Watch Series 3"><strong>W2</strong><br>⌚</div>
+Used in: Apple Watch Series 3"><strong>W2</strong> ⌚</div>
           <div class="cell" data-tooltip="Apple W3 (2018)
 Introduced with AirPods 2
 Hey Siri support
-Lower latency"><strong>W3</strong><br>🎧⌚</div>
-          <div class="cell">🎧</div>
-          <div class="cell">🎧</div>
-          <div class="cell">🎧</div>
-          <div class="cell">🎧</div>
-          <div class="cell">🎧</div>
-          <div class="cell">🎧</div>
-          <div class="cell">🎧</div>
+Lower latency"><strong>W3</strong> 🎧⌚</div>
+          <div class="cell">W3 🎧</div>
+          <div class="cell">W3 🎧</div>
+          <div class="cell">W3 🎧</div>
+          <div class="cell">W3 🎧</div>
+          <div class="cell">W3 🎧</div>
+          <div class="cell">W3 🎧</div>
+          <div class="cell">W3 🎧</div>
         </div>
 
-        <!-- Series U -->
+        <!-- Series U (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series U - Ultra Wideband
 Spatial awareness chip
@@ -625,19 +636,19 @@ Precision Finding capability"><strong>Series U</strong></div>
 Ultra Wideband chip
 Spatial awareness
 Precision Finding
-First in: iPhone 11"><strong>U1</strong><br>📱⌚🏷️🔊</div>
-          <div class="cell">U1<br>📱⌚🏷️🔊</div>
-          <div class="cell">U1<br>📱⌚🏷️🔊</div>
-          <div class="cell">U1<br>📱⌚🏷️🔊</div>
+First in: iPhone 11"><strong>U1</strong> 📱⌚🏷️🔊</div>
+          <div class="cell">U1 📱⌚🏷️🔊</div>
+          <div class="cell">U1 📱⌚🏷️🔊</div>
+          <div class="cell">U1 📱⌚🏷️🔊</div>
           <div class="cell" data-tooltip="Apple U2 (2023)
 3x range of U1
 Lower power consumption
-First in: iPhone 15"><strong>U2</strong><br>📱⌚🏷️</div>
-          <div class="cell">U2<br>📱⌚🏷️</div>
-          <div class="cell">U2<br>📱⌚🏷️</div>
+First in: iPhone 15"><strong>U2</strong> 📱⌚🏷️</div>
+          <div class="cell">U2 📱⌚🏷️</div>
+          <div class="cell">U2 📱⌚🏷️</div>
         </div>
 
-        <!-- Series H -->
+        <!-- Series H (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series H - Headphone chips
 Audio processing
@@ -654,22 +665,22 @@ Active Noise Cancellation"><strong>Series H</strong></div>
           <div class="cell" data-tooltip="Apple H1 (2019)
 10 audio cores
 Real-time noise cancellation
-Used in: AirPods Pro/Max"><strong>H1</strong><br>🎧</div>
-          <div class="cell">H1<br>🎧</div>
-          <div class="cell">H1<br>🎧</div>
+Used in: AirPods Pro/Max"><strong>H1</strong> 🎧</div>
+          <div class="cell">H1 🎧</div>
+          <div class="cell">H1 🎧</div>
           <div class="cell" data-tooltip="Apple H2 (2022)
 Advanced computational audio
 2x better ANC than H1
-Used in: AirPods Pro 2"><strong>H2</strong><br>🎧</div>
-          <div class="cell">H2<br>🎧</div>
-          <div class="cell">H2<br>🎧</div>
+Used in: AirPods Pro 2"><strong>H2</strong> 🎧</div>
+          <div class="cell">H2 🎧</div>
+          <div class="cell">H2 🎧</div>
           <div class="cell" data-tooltip="Apple H3 (2025)
 Lossless audio support
 Enhanced spatial audio
-AirPods Pro 3"><strong>H3</strong><br>🎧</div>
+AirPods Pro 3"><strong>H3</strong> 🎧</div>
         </div>
 
-        <!-- Series M -->
+        <!-- Series M (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series M - Mac processors
 Desktop/laptop SoCs
@@ -689,33 +700,33 @@ Unified memory architecture"><strong>Series M</strong></div>
 5nm TSMC
 8-core CPU (4P+4E)
 7/8-core GPU
-16-core Neural Engine"><strong>M1</strong><br>💻📲</div>
+16-core Neural Engine"><strong>M1</strong> 💻📲</div>
           <div class="cell" data-tooltip="M1 Pro/Max/Ultra (2021)
 M1 Pro: 10-core CPU, 16-core GPU
 M1 Max: 10-core CPU, 32-core GPU
-M1 Ultra: 20-core CPU, 64-core GPU">M1<br>💻📲</div>
+M1 Ultra: 20-core CPU, 64-core GPU">M1 💻📲</div>
           <div class="cell" data-tooltip="Apple M2 (2022)
 5nm TSMC Enhanced
 8-core CPU (4P+4E)
 10-core GPU
 18% faster than M1
-Vision Pro debut"><strong>M2</strong><br>💻📲🥽</div>
+Vision Pro debut"><strong>M2</strong> 💻📲🥽</div>
           <div class="cell" data-tooltip="Apple M3 (2023)
 3nm TSMC
 Dynamic Caching
 Hardware Ray Tracing
-8-core CPU base"><strong>M3</strong><br>💻</div>
+8-core CPU base"><strong>M3</strong> 💻</div>
           <div class="cell" data-tooltip="M3 Pro/Max (2024)
 M3 Pro: 12-core CPU
-M3 Max: 16-core CPU">M3<br>💻</div>
+M3 Max: 16-core CPU">M3 💻</div>
           <div class="cell" data-tooltip="M3 Ultra (Mar 2025)
 32-core CPU
 80-core GPU
 M4 (Mar 2025)
-MacBook Air refresh"><strong>M4</strong><br>💻📲</div>
+MacBook Air refresh"><strong>M4</strong> 💻📲</div>
         </div>
 
-        <!-- Series N -->
+        <!-- Series N (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series N - Networking silicon
 Cellular modem technology
@@ -738,10 +749,10 @@ Cellular modem technology
           <div class="cell" data-tooltip="Apple N1 (2025)
 First Apple modem chip
 5G mmWave + sub-6
-Integrated in iPhone Air"><strong>N1</strong><br>📱</div>
+Integrated in iPhone Air"><strong>N1</strong> 📱</div>
         </div>
 
-        <!-- Series R -->
+        <!-- Series R (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series R - Reality/Vision coprocessor
 Handles sensor fusion
@@ -763,11 +774,11 @@ Real-time environment mapping"><strong>Series R</strong></div>
           <div class="cell" data-tooltip="Apple R1 (2024)
 12ms photon-to-photon latency
 Sensor fusion processor
-Vision Pro exclusive"><strong>R1</strong><br>🥽</div>
-          <div class="cell">R1<br>🥽</div>
+Vision Pro exclusive"><strong>R1</strong> 🥽</div>
+          <div class="cell">R1 🥽</div>
         </div>
 
-        <!-- Series C -->
+        <!-- Series C (alignement horizontal) -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series C - Cellular modem family
 Evolution of N-series
@@ -790,7 +801,7 @@ Advanced 5G features"><strong>Series C</strong></div>
           <div class="cell" data-tooltip="Apple C1X (2025)
 Second-gen Apple modem
 Improved efficiency
-iPhone 17 integration"><strong>C1X</strong><br>📱</div>
+iPhone 17 integration"><strong>C1X</strong> 📱</div>
         </div>
       </div>
     </div>
