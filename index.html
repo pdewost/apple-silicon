@@ -1,265 +1,944 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Apple Silicon Saga</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet" />
-<style>
-/* --- Apple Silicon Saga – robust table styling (sticky header/col + zebra) --- */
-:root{
-  --bg-body:#f5f7fb;
-  --bg-card:#ffffff;
-  --grid:#e6e8ef;
-  --row-even:#f7f8fb;
-  --row-odd:#ffffff;
-  --text:#111827;
-  --first-col-w: 140px;   /* largeur de la 1re colonne */
-}
-*{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg-body); color:var(--text); font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+    * { 
+      box-sizing: border-box; 
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      font-weight: 700;
+    }
 
-/* le conteneur qui entoure la table (si présent) */
-.container, .wrapper{max-width:1400px;margin:0 auto;padding:8px}
+    /* Wrapper pour permettre tooltips + scroll */
+    .timeline-wrapper {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      padding: 0;
+      overflow: hidden;
+    }
 
-/* TABLE */
-table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;background:var(--bg-card);border:1px solid var(--grid);border-radius:12px;overflow:hidden}
-thead th, tbody td, tbody th{border-bottom:1px solid var(--grid);border-right:1px solid var(--grid)}
-thead th:last-child, tbody td:last-child, tbody th:last-child{border-right:none}
+    .timeline-container {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
 
-/* hauteurs/paddings homogènes, bon alignement des emoji */
-th,td{padding:10px 12px; height:52px; vertical-align:middle; text-align:center}
-td{font-variant-numeric:tabular-nums}
+    /* Grid: 1 fixed first col + 16 years = 17 columns */
+    .header-row, .rows .row {
+      display: grid;
+      grid-template-columns: 140px repeat(16, 120px);
+      min-height: 60px;
+    }
 
-/* ENTÊTE COLLER (sticky) */
-thead th{
-  position:sticky; top:0; z-index:3;
-  background:var(--bg-card);
-  backdrop-filter:saturate(1.1) blur(6px);
-}
+    /* Header row styling avec z-index cohérents */
+    .header-row {
+      background: linear-gradient(135deg, #1a1a2e 0%, #0f0f0f 100%);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    
+    .header-row .cell {
+      padding: 15px 8px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .header-row .cell.first-col {
+      text-align: left;
+      justify-content: flex-start;
+      padding-left: 15px;
+      position: sticky;
+      left: 0;
+      z-index: 21;
+      background: linear-gradient(135deg, #2a2a3e 0%, #1f1f1f 100%);
+      box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    }
 
-/* 1re COLONNE COLLEE (sticky + fond plein) */
-thead th:first-child,
-tbody th:first-child,
-tbody td:first-child{
-  position:sticky; left:0; z-index:2;
-  width:var(--first-col-w); min-width:var(--first-col-w); max-width:var(--first-col-w);
-  background:var(--bg-card);  /* fond SOLIDE pour éviter les transparences */
-  text-align:left; font-weight:600;
-  box-shadow: 1px 0 0 0 var(--grid); /* trait vertical côté droit */
-}
+    /* Data rows styling */
+    .rows {
+      background: white;
+    }
+    
+    .rows .row {
+      transition: transform 0.2s;
+      position: relative;
+    }
+    
+    .rows .row:hover {
+      transform: translateX(2px);
+      z-index: 5;
+    }
+    
+    /* Zebra striping avec inherit pour sticky cells */
+    .rows .row:nth-child(odd)  { 
+      background-color: #ffffff; 
+    }
+    .rows .row:nth-child(even) { 
+      background-color: #f8f9fa; 
+    }
+    
+    .rows .row .cell {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      font-size: 16px;
+      font-weight: 300;
+      position: relative;
+      background-color: inherit; /* Hérite du background de la row */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-height: 60px;
+      cursor: default;
+    }
+    
+    .rows .row .cell strong {
+      font-weight: 700;
+      color: #1a1a2e;
+      font-size: 17px;
+    }
 
-/* ZÉBRAGE FIABLE (n’affecte pas la 1re colonne) */
-tbody tr:nth-of-type(odd) > *:not(:first-child){ background:var(--row-odd) }
-tbody tr:nth-of-type(even)> *:not(:first-child){ background:var(--row-even) }
+    /* First column sticky avec background correct */
+    .rows .row .cell.first-col {
+      font-weight: 700;
+      font-size: 18px;
+      text-align: left;
+      justify-content: center;
+      align-items: flex-start;
+      padding-left: 15px;
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      background-color: inherit;
+      border-right: 2px solid #d0d0d0;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+    }
+    
+    /* Indicateur visuel pour les cellules avec tooltip */
+    .cell[data-tooltip] {
+      cursor: help;
+      position: relative;
+    }
+    
+    .cell[data-tooltip]:not(.first-col)::before {
+      content: "•";
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 8px;
+      color: #007AFF;
+      opacity: 0.5;
+    }
+    
+    /* Tooltip dynamique styles */
+    .dynamic-tooltip {
+      position: fixed;
+      background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(15,15,15,0.98) 100%);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 350px;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      white-space: pre-line;
+    }
+    
+    .dynamic-tooltip.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    /* Legend améliorée */
+    .legend {
+      margin: 30px auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      max-width: 900px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    
+    .legend-item:hover {
+      background: #e9ecef;
+      transform: translateY(-2px);
+      border-color: #007AFF;
+    }
+    
+    .legend-emoji {
+      font-size: 26px;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+    }
+    
+    .legend-text {
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+    }
 
-/* survol lisible (toute la ligne) */
-tbody tr:hover > *{ background:#fffbe9 }
+    /* References section */
+    .references {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .references h3 {
+      margin-bottom: 16px;
+      color: #1a1a2e;
+      font-size: 1.2em;
+    }
+    
+    .references ul {
+      padding-left: 24px;
+      list-style-type: none;
+      counter-reset: ref-counter;
+    }
+    
+    .references li {
+      margin-bottom: 10px;
+      color: #495057;
+      counter-increment: ref-counter;
+      position: relative;
+      padding-left: 24px;
+    }
+    
+    .references li::before {
+      content: "[" counter(ref-counter) "]";
+      position: absolute;
+      left: 0;
+      color: #007AFF;
+      font-weight: 600;
+    }
+    
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #dee2e6, transparent);
+      margin: 30px auto;
+      max-width: 200px;
+    }
+    
+    /* Animation d'entrée */
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+    
+    .rows .row {
+      animation: fadeIn 0.4s ease-out forwards;
+      opacity: 0;
+    }
+    
+    .rows .row:nth-child(1) { animation-delay: 0.05s; }
+    .rows .row:nth-child(2) { animation-delay: 0.10s; }
+    .rows .row:nth-child(3) { animation-delay: 0.15s; }
+    .rows .row:nth-child(4) { animation-delay: 0.20s; }
+    .rows .row:nth-child(5) { animation-delay: 0.25s; }
+    .rows .row:nth-child(6) { animation-delay: 0.30s; }
+    .rows .row:nth-child(7) { animation-delay: 0.35s; }
+    .rows .row:nth-child(8) { animation-delay: 0.40s; }
+    .rows .row:nth-child(9) { animation-delay: 0.45s; }
 
-/* petits écarts d’alignement des emoji entre plateformes */
-td,th{line-height:1.1}
-td :where(span, i, b, small, em){vertical-align:middle}
-
-/* LEGEND (s’il y en a une) */
-.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.5rem .75rem;max-width:1100px;margin:12px auto}
-.legend .item{display:flex;align-items:center;gap:.5rem;padding:.5rem .625rem;background:var(--bg-card);border:1px solid var(--grid);border-radius:10px}
-
-/* DARK MODE optionnel */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg-body:#0b0f14; --bg-card:#0f141a; --grid:#1f2833;
-    --row-even:#111821; --row-odd:#0f141a; --text:#e5e7eb;
-  }
-  tbody tr:hover > *{ background:#1a2330 }
-  thead th:first-child,
-  tbody th:first-child,
-  tbody td:first-child{ box-shadow: 1px 0 0 0 var(--grid) }
-}
-</style>
-
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+      
+      .header-row, .rows .row {
+        grid-template-columns: 100px repeat(16, 110px);
+      }
+      
+      .cell[data-tooltip]:not(.first-col)::before {
+        display: none;
+      }
+      
+      .legend {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 16px;
+      }
+      
+      .legend-item {
+        padding: 8px 10px;
+      }
+      
+      .legend-emoji {
+        font-size: 22px;
+      }
+      
+      .legend-text {
+        font-size: 12px;
+      }
+    }
+    
+    /* Mode sombre automatique */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #0f0f0f 100%);
+      }
+      
+      h1 {
+        color: #f0f0f0;
+      }
+      
+      .timeline-wrapper,
+      .legend,
+      .references {
+        background: #2d2d30;
+        color: #f0f0f0;
+      }
+      
+      .rows {
+        background: #2d2d30;
+      }
+      
+      .rows .row:nth-child(odd) {
+        background-color: #2d2d30;
+      }
+      
+      .rows .row:nth-child(even) {
+        background-color: #252528;
+      }
+      
+      .rows .row .cell {
+        border-color: #404040;
+        color: #f0f0f0;
+      }
+      
+      .rows .row .cell strong {
+        color: #f0f0f0;
+      }
+      
+      .legend-item {
+        background: #3d3d40;
+        border-color: #505050;
+      }
+      
+      .legend-item:hover {
+        background: #4d4d50;
+        border-color: #4a9eff;
+      }
+      
+      .legend-text {
+        color: #b0b0b0;
+      }
+      
+      .references h3 {
+        color: #f0f0f0;
+      }
+      
+      .references li {
+        color: #b0b0b0;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>The Apple Silicon Saga</h1>
 
-  <div class="timeline-container">
-    <!-- header -->
-    <div class="header-row">
-      <div class="cell first-col">Series</div>
-      <div class="cell">2010</div><div class="cell">2011</div><div class="cell">2012</div><div class="cell">2013</div>
-      <div class="cell">2014</div><div class="cell">2015</div><div class="cell">2016</div><div class="cell">2017</div>
-      <div class="cell">2018</div><div class="cell">2019</div><div class="cell">2020</div><div class="cell">2021</div>
-      <div class="cell">2022</div><div class="cell">2023</div><div class="cell">2024</div><div class="cell">2025</div>
+  <div class="timeline-wrapper">
+    <div class="timeline-container">
+      <!-- Header -->
+      <div class="header-row">
+        <div class="cell first-col">Series</div>
+        <div class="cell">2010</div>
+        <div class="cell">2011</div>
+        <div class="cell">2012</div>
+        <div class="cell">2013</div>
+        <div class="cell">2014</div>
+        <div class="cell">2015</div>
+        <div class="cell">2016</div>
+        <div class="cell">2017</div>
+        <div class="cell">2018</div>
+        <div class="cell">2019</div>
+        <div class="cell">2020</div>
+        <div class="cell">2021</div>
+        <div class="cell">2022</div>
+        <div class="cell">2023</div>
+        <div class="cell">2024</div>
+        <div class="cell">2025</div>
+      </div>
+
+      <div class="rows">
+        <!-- Series A -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series A - Application Processors
+Main SoC for iPhone and iPad
+Started: 2010 with A4
+Current: A19 (2025)
+Key innovations:
+- First 64-bit mobile (A7, 2013)
+- Neural Engine (A11, 2017)
+- 3nm process (A17, 2023)"><strong>Series A</strong></div>
+          <div class="cell" data-tooltip="Apple A4 (2010)
+45nm Samsung process
+1 GHz ARM Cortex-A8
+PowerVR SGX535 GPU
+First used in: iPhone 4, iPad 1, iPod Touch 4, Apple TV 2"><strong>A4</strong><br>📱📲🎵📺</div>
+          <div class="cell" data-tooltip="Apple A5 (2011)
+45nm → 32nm Samsung
+Dual-core ARM Cortex-A9
+Dual-core PowerVR SGX543MP2
+First used in: iPhone 4S, iPad 2, iPod Touch 5"><strong>A5</strong><br>📱📲🎵</div>
+          <div class="cell" data-tooltip="Apple A6 (2012)
+32nm Samsung
+First custom Apple CPU design
+Triple-core PowerVR SGX543MP3
+First used in: iPhone 5"><strong>A6</strong><br>📱</div>
+          <div class="cell" data-tooltip="Apple A7 (2013)
+28nm Samsung
+First 64-bit mobile processor
+PowerVR G6430
+First used in: iPhone 5S, iPad Air"><strong>A7</strong><br>📱📲</div>
+          <div class="cell" data-tooltip="Apple A8 (2014)
+20nm TSMC
+1.4 GHz dual-core
+PowerVR GX6450
+First used in: iPhone 6/6 Plus, HomePod"><strong>A8</strong><br>📱🔊</div>
+          <div class="cell" data-tooltip="Apple A9 (2015)
+16nm TSMC/14nm Samsung
+1.85 GHz dual-core
+PowerVR GT7600
+First used in: iPhone 6S/6S Plus, iPad 5"><strong>A9</strong><br>📱📲</div>
+          <div class="cell" data-tooltip="Apple A10 Fusion (2016)
+16nm TSMC
+2+2 big.LITTLE design
+PowerVR GT7600 Plus
+First used in: iPhone 7/7 Plus, iPad 6, Apple TV 4K"><strong>A10</strong><br>📱📲📺</div>
+          <div class="cell" data-tooltip="Apple A11 Bionic (2017)
+10nm TSMC
+First with Neural Engine
+Apple-designed GPU (3-core)
+First used in: iPhone 8/8 Plus/X"><strong>A11</strong><br>📱</div>
+          <div class="cell" data-tooltip="Apple A12 Bionic (2018)
+7nm TSMC
+8-core Neural Engine
+4-core GPU
+First used in: iPhone XS/XR, iPad Air 3, Apple TV 4K Gen 2"><strong>A12</strong><br>📱📲🎵📺</div>
+          <div class="cell" data-tooltip="Apple A13 Bionic (2019)
+7nm+ TSMC EUV
+8-core Neural Engine (20% faster)
+4-core GPU
+First used in: iPhone 11 series"><strong>A13</strong><br>📱</div>
+          <div class="cell" data-tooltip="Apple A14 Bionic (2020)
+5nm TSMC
+16-core Neural Engine
+4-core GPU
+First used in: iPhone 12 series, iPad Air 4"><strong>A14</strong><br>📱📲</div>
+          <div class="cell" data-tooltip="Apple A15 Bionic (2021)
+5nm TSMC Enhanced
+16-core Neural Engine
+5-core GPU (Pro models)
+First used in: iPhone 13 series, iPad Mini 6"><strong>A15</strong><br>📱📲</div>
+          <div class="cell" data-tooltip="Apple A16 Bionic (2022)
+4nm TSMC
+16-core Neural Engine
+5-core GPU
+First used in: iPhone 14 Pro/Pro Max"><strong>A16</strong><br>📱</div>
+          <div class="cell" data-tooltip="Apple A17 Pro (2023)
+3nm TSMC
+16-core Neural Engine (2x faster)
+6-core GPU with Ray Tracing
+First used in: iPhone 15 Pro/Pro Max"><strong>A17</strong><br>📱</div>
+          <div class="cell" data-tooltip="Apple A18 (2024)
+3nm TSMC Enhanced
+17-core Neural Engine
+6-core GPU
+First used in: iPhone 16 series"><strong>A18</strong><br>📱</div>
+          <div class="cell" data-tooltip="Apple A19 (2025)
+2nm TSMC (rumored)
+Enhanced AI capabilities
+First used in: iPhone 17 series"><strong>A19</strong><br>📱</div>
+        </div>
+
+        <!-- Series S -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series S - System in Package
+Designed for Apple Watch
+Based on A-series architecture
+Integrated memory and storage"><strong>Series S</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple S1 (2015)
+28nm Samsung
+520 MHz ARM Cortex-A7
+First Apple Watch chip"><strong>S1</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S2 (2016)
+Dual-core processor
+Built-in GPS
+50% faster than S1"><strong>S2</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S3 (2017)
+Dual-core processor
+W2 wireless chip
+70% faster than S2"><strong>S3</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S4 (2018)
+64-bit dual-core
+2x faster than S3
+Larger display support"><strong>S4</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S5 (2019)
+Based on S4 architecture
+Compass + Always-On display
+Also in HomePod mini"><strong>S5</strong><br>⌚🔊</div>
+          <div class="cell" data-tooltip="Apple S6 (2020)
+Based on A13 cores
+20% faster than S5
+Always-On altimeter"><strong>S6</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S7 (2021)
+Same CPU as S6
+33% faster charging
+Also in HomePod mini"><strong>S7</strong><br>⌚🔊</div>
+          <div class="cell" data-tooltip="Apple S8 (2022)
+Same performance as S7
+Crash detection
+Temperature sensing"><strong>S8</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S9 (2023)
+4-core Neural Engine
+On-device Siri
+Double Tap gesture"><strong>S9</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple S9 (2024)
+Continued production
+Used in Apple Watch SE 3">S9<br>⌚</div>
+          <div class="cell" data-tooltip="Apple S10 (2025)
+Enhanced health sensors
+Improved battery efficiency"><strong>S10</strong><br>⌚</div>
+        </div>
+
+        <!-- Series W -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series W - Wireless chips
+Bluetooth and WiFi connectivity
+Used in AirPods and Beats"><strong>Series W</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple W1 (2016)
+First wireless chip
+Class 1 Bluetooth
+Used in: AirPods 1, Beats"><strong>W1</strong><br>🎧🎵</div>
+          <div class="cell" data-tooltip="Apple W2 (2017)
+WiFi support added
+50% more efficient
+Used in: Apple Watch Series 3"><strong>W2</strong><br>⌚</div>
+          <div class="cell" data-tooltip="Apple W3 (2018)
+Introduced with AirPods 2
+Hey Siri support
+Lower latency"><strong>W3</strong><br>🎧⌚</div>
+          <div class="cell">🎧</div>
+          <div class="cell">🎧</div>
+          <div class="cell">🎧</div>
+          <div class="cell">🎧</div>
+          <div class="cell">🎧</div>
+          <div class="cell">🎧</div>
+          <div class="cell">🎧</div>
+        </div>
+
+        <!-- Series U -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series U - Ultra Wideband
+Spatial awareness chip
+Precision Finding capability"><strong>Series U</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple U1 (2019)
+Ultra Wideband chip
+Spatial awareness
+Precision Finding
+First in: iPhone 11"><strong>U1</strong><br>📱⌚🏷️🔊</div>
+          <div class="cell">U1<br>📱⌚🏷️🔊</div>
+          <div class="cell">U1<br>📱⌚🏷️🔊</div>
+          <div class="cell">U1<br>📱⌚🏷️🔊</div>
+          <div class="cell" data-tooltip="Apple U2 (2023)
+3x range of U1
+Lower power consumption
+First in: iPhone 15"><strong>U2</strong><br>📱⌚🏷️</div>
+          <div class="cell">U2<br>📱⌚🏷️</div>
+          <div class="cell">U2<br>📱⌚🏷️</div>
+        </div>
+
+        <!-- Series H -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series H - Headphone chips
+Audio processing
+Active Noise Cancellation"><strong>Series H</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple H1 (2019)
+10 audio cores
+Real-time noise cancellation
+Used in: AirPods Pro/Max"><strong>H1</strong><br>🎧</div>
+          <div class="cell">H1<br>🎧</div>
+          <div class="cell">H1<br>🎧</div>
+          <div class="cell" data-tooltip="Apple H2 (2022)
+Advanced computational audio
+2x better ANC than H1
+Used in: AirPods Pro 2"><strong>H2</strong><br>🎧</div>
+          <div class="cell">H2<br>🎧</div>
+          <div class="cell">H2<br>🎧</div>
+          <div class="cell" data-tooltip="Apple H3 (2025)
+Lossless audio support
+Enhanced spatial audio
+AirPods Pro 3"><strong>H3</strong><br>🎧</div>
+        </div>
+
+        <!-- Series M -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series M - Mac processors
+Desktop/laptop SoCs
+ARM-based architecture
+Unified memory architecture"><strong>Series M</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple M1 (2020)
+5nm TSMC
+8-core CPU (4P+4E)
+7/8-core GPU
+16-core Neural Engine"><strong>M1</strong><br>💻📲</div>
+          <div class="cell" data-tooltip="M1 Pro/Max/Ultra (2021)
+M1 Pro: 10-core CPU, 16-core GPU
+M1 Max: 10-core CPU, 32-core GPU
+M1 Ultra: 20-core CPU, 64-core GPU">M1<br>💻📲</div>
+          <div class="cell" data-tooltip="Apple M2 (2022)
+5nm TSMC Enhanced
+8-core CPU (4P+4E)
+10-core GPU
+18% faster than M1
+Vision Pro debut"><strong>M2</strong><br>💻📲🥽</div>
+          <div class="cell" data-tooltip="Apple M3 (2023)
+3nm TSMC
+Dynamic Caching
+Hardware Ray Tracing
+8-core CPU base"><strong>M3</strong><br>💻</div>
+          <div class="cell" data-tooltip="M3 Pro/Max (2024)
+M3 Pro: 12-core CPU
+M3 Max: 16-core CPU">M3<br>💻</div>
+          <div class="cell" data-tooltip="M3 Ultra (Mar 2025)
+32-core CPU
+80-core GPU
+M4 (Mar 2025)
+MacBook Air refresh"><strong>M4</strong><br>💻📲</div>
+        </div>
+
+        <!-- Series N -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series N - Networking silicon
+Cellular modem technology
+5G capabilities"><strong>Series N</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple N1 (2025)
+First Apple modem chip
+5G mmWave + sub-6
+Integrated in iPhone Air"><strong>N1</strong><br>📱</div>
+        </div>
+
+        <!-- Series R -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series R - Reality/Vision coprocessor
+Handles sensor fusion
+Real-time environment mapping"><strong>Series R</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple R1 (2024)
+12ms photon-to-photon latency
+Sensor fusion processor
+Vision Pro exclusive"><strong>R1</strong><br>🥽</div>
+          <div class="cell">R1<br>🥽</div>
+        </div>
+
+        <!-- Series C -->
+        <div class="row">
+          <div class="cell first-col" data-tooltip="Series C - Cellular modem family
+Evolution of N-series
+Advanced 5G features"><strong>Series C</strong></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell"></div>
+          <div class="cell" data-tooltip="Apple C1X (2025)
+Second-gen Apple modem
+Improved efficiency
+iPhone 17 integration"><strong>C1X</strong><br>📱</div>
+        </div>
+      </div>
     </div>
-
-    <div class="rows">
-      <!-- Series A -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="Series A (SoC for iPhone and iPad)
-Apple A4 (2010) – First mobile chip by Apple [1]. ..."> <strong>Series A</strong></div>
-        <div class="cell" data-tooltip="Apple A4 (2010) – First mobile chip by Apple [1]."><strong>A4</strong><br>📱📲🎵📺</div>
-        <div class="cell" data-tooltip="Apple A5 (2011) – ..."><strong>A5</strong><br>📱📲🎵</div>
-        <div class="cell" data-tooltip="Apple A6 (2012) – ..."><strong>A6</strong><br>📱</div>
-        <div class="cell" data-tooltip="Apple A7 (2013) – ..."><strong>A7</strong><br>📱📲</div>
-        <div class="cell" data-tooltip="Apple A8 (2014) – ..."><strong>A8</strong><br>📱🔊</div>
-        <div class="cell" data-tooltip="Apple A9 (2015) – ..."><strong>A9</strong><br>📱📲</div>
-        <div class="cell" data-tooltip="Apple A10 (2016) – ..."><strong>A10</strong><br>📱📲📺</div>
-        <div class="cell" data-tooltip="Apple A11 (2017) – ..."><strong>A11</strong><br>📱</div>
-        <div class="cell" data-tooltip="Apple A12 (2018) – ..."><strong>A12</strong><br>📱📲🎵📺</div>
-        <div class="cell" data-tooltip="Apple A13 (2019) – ..."><strong>A13</strong><br>📱</div>
-        <div class="cell" data-tooltip="Apple A14 (2020) – ..."><strong>A14</strong><br>📱📲</div>
-        <div class="cell" data-tooltip="Apple A15 (2021) – ..."><strong>A15</strong><br>📱📲</div>
-        <div class="cell" data-tooltip="Apple A16 (2022) – ..."><strong>A16</strong><br>📱</div>
-        <div class="cell" data-tooltip="Apple A17 (2023) – ..."><strong>A17</strong><br>📱</div>
-        <div class="cell" data-tooltip="Apple A18 (2024) – ..."><strong>A18</strong><br>📱</div>
-        <div class="cell" data-tooltip="Apple A19 (2025) – ..."><strong>A19</strong><br>📱</div>
-      </div>
-
-      <!-- Series S -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="S-series summary..."><strong>Series S</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell" data-tooltip="S1 (2015)"><strong>S1</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S2 (2016)"><strong>S2</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S3 (2017)"><strong>S3</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S4 (2018)"><strong>S4</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S5 (2019)"><strong>S5</strong><br>⌚🔊</div>
-        <div class="cell" data-tooltip="S6 (2020)"><strong>S6</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S7 (2021)"><strong>S7</strong><br>⌚🔊</div>
-        <div class="cell" data-tooltip="S8 (2022)"><strong>S8</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S9 (2023)"><strong>S9</strong><br>⌚</div>
-        <div class="cell" data-tooltip="S9 (2024) duplicate">S9<br>⌚</div>
-        <div class="cell" data-tooltip="S10 (2025)"><strong>S10</strong><br>⌚</div>
-      </div>
-
-      <!-- Series W -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="W-series summary..."><strong>Series W</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell" data-tooltip="W1 (2016)"><strong>W1</strong><br>🎧🎵</div>
-        <div class="cell" data-tooltip="W2 (2017)"><strong>W2</strong><br>🎧🎵</div>
-        <div class="cell" data-tooltip="W3 (2018)"><strong>W3</strong><br>🎧🎵⌚</div>
-        <div class="cell" data-tooltip="W3 (2019) duplicate">🎧</div>
-        <div class="cell" data-tooltip="W3 (2020) duplicate">🎧</div>
-        <div class="cell" data-tooltip="W3 (2021) duplicate">🎧</div>
-        <div class="cell" data-tooltip="W3 (2022) duplicate">🎧</div>
-        <div class="cell" data-tooltip="W3 (2023) duplicate">🎧</div>
-        <div class="cell" data-tooltip="W3 (2024) duplicate">🎧</div>
-        <div class="cell" data-tooltip="W3 (2025) duplicate">🎧</div>
-      </div>
-
-      <!-- Series U -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="U-series summary..."><strong>Series U</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell" data-tooltip="U1 (2019)"><strong>U1</strong><br>📱⌚🏷️🔊</div>
-        <div class="cell" data-tooltip="U1 (2020 duplicate)">U1<br>📱⌚🏷️🔊</div>
-        <div class="cell" data-tooltip="U1 (2021 duplicate)">U1<br>📱⌚🏷️🔊</div>
-        <div class="cell" data-tooltip="U1 (2022 duplicate)">U1<br>📱⌚🏷️🔊</div>
-        <div class="cell" data-tooltip="U2 (2023)"><strong>U2</strong><br>📱⌚🏷️🔊</div>
-        <div class="cell" data-tooltip="U2 (2024 duplicate)">U2<br>📱⌚🏷️🔊</div>
-        <div class="cell" data-tooltip="U2 (2025 duplicate)">U2<br>📱⌚🏷️🔊</div>
-      </div>
-
-      <!-- Series H -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="H-series summary..."><strong>Series H</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell" data-tooltip="H1 (2019)"><strong>H1</strong><br>🎧</div>
-        <div class="cell" data-tooltip="H1 (2020 duplicate)">H1<br>🎧</div>
-        <div class="cell" data-tooltip="H1 (2021 duplicate)">H1<br>🎧</div>
-        <div class="cell" data-tooltip="H2 (2022)"><strong>H2</strong><br>🎧</div>
-        <div class="cell" data-tooltip="H2 (2023 duplicate)">H2<br>🎧</div>
-        <div class="cell" data-tooltip="H2 (2024 duplicate)">H2<br>🎧</div>
-        <div class="cell" data-tooltip="H3 (2025)"><strong>H3</strong><br>🎧</div>
-      </div>
-
-      <!-- Series M -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="M-series summary..."><strong>Series M</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell" data-tooltip="M1 (2020)"><strong>M1</strong><br>💻📲</div>
-        <div class="cell" data-tooltip="M1 (2021 duplicate)">M1<br>💻📲</div>
-        <div class="cell" data-tooltip="M2 (2022)"><strong>M2</strong><br>💻📲🥽</div>
-        <div class="cell" data-tooltip="M3 (2023)"><strong>M3</strong><br>💻</div>
-        <div class="cell" data-tooltip="M3 (2024 duplicate)">M3<br>💻</div>
-        <div class="cell" data-tooltip="M4 / M3 Ultra (2025)"><strong>M4</strong><br>💻📲</div>
-      </div>
-
-      <!-- Series N (fixed: only in 2025) -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="Series N (Networking silicon) summary..."><strong>Series N</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <!-- 2024: intentionally empty -->
-        <div class="cell"></div>
-        <!-- 2025: N1 only -->
-        <div class="cell" data-tooltip="N1 (2025)"><strong>N1</strong><br>📱</div>
-      </div>
-
-      <!-- Series R -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="Series R (spatial/vision coprocessors)..."><strong>Series R</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell" data-tooltip="R1 (2024)"><strong>R1</strong><br>🥽</div>
-        <div class="cell" data-tooltip="R1 (2025 duplicate)">R1<br>🥽</div>
-      </div>
-
-      <!-- Series C (fixed: only in 2025) -->
-      <div class="row">
-        <div class="cell first-col" data-tooltip="Series C (modem family) summary..."><strong>Series C</strong></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        <!-- 2024: intentionally empty -->
-        <div class="cell"></div>
-        <!-- 2025: C1X only -->
-        <div class="cell" data-tooltip="C1X (2025)"><strong>C1X</strong><br>📱</div>
-      </div>
-
-    </div> <!-- .rows -->
-  </div> <!-- .timeline-container -->
+  </div>
 
   <div class="legend">
-    <div class="legend-item"><span class="legend-emoji">📱</span><span class="legend-text">iPhone</span></div>
-    <div class="legend-item"><span class="legend-emoji">📲</span><span class="legend-text">iPad</span></div>
-    <div class="legend-item"><span class="legend-emoji">🎵</span><span class="legend-text">iPod (iPod Touch)</span></div>
-    <div class="legend-item"><span class="legend-emoji">💻</span><span class="legend-text">MacBook</span></div>
-    <div class="legend-item"><span class="legend-emoji">📺</span><span class="legend-text">Apple TV</span></div>
-    <div class="legend-item"><span class="legend-emoji">🔊</span><span class="legend-text">HomePod</span></div>
-    <div class="legend-item"><span class="legend-emoji">⌚</span><span class="legend-text">Apple Watch</span></div>
-    <div class="legend-item"><span class="legend-emoji">🎧</span><span class="legend-text">AirPods / Beats</span></div>
-    <div class="legend-item"><span class="legend-emoji">🏷️</span><span class="legend-text">AirTag</span></div>
-    <div class="legend-item"><span class="legend-emoji">🥽</span><span class="legend-text">Vision Pro</span></div>
+    <div class="legend-item">
+      <span class="legend-emoji">📱</span>
+      <span class="legend-text">iPhone</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">📲</span>
+      <span class="legend-text">iPad</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">🎵</span>
+      <span class="legend-text">iPod Touch</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">💻</span>
+      <span class="legend-text">Mac</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">📺</span>
+      <span class="legend-text">Apple TV</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">🔊</span>
+      <span class="legend-text">HomePod</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">⌚</span>
+      <span class="legend-text">Apple Watch</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">🎧</span>
+      <span class="legend-text">AirPods/Beats</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">🏷️</span>
+      <span class="legend-text">AirTag</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-emoji">🥽</span>
+      <span class="legend-text">Vision Pro</span>
+    </div>
   </div>
 
   <hr>
 
   <div class="references">
-    <p><strong>References (as of 2025-09-17):</strong></p>
+    <h3>References (as of 2025-09-17)</h3>
     <ul>
-      <li>[1] APPLE.FANDOM.COM – Technical details on A-series SoCs.</li>
-      <li>[2] BLOGDOIPHONE.COM – Analyses of S-series.</li>
-      <li>[3] QUALCOMM.COM – Historical info on modems.</li>
-      <li>[4] BROADCOM.COM – Connectivity components.</li>
-      <li>[5] STMICRO.COM – Sensor info.</li>
-      <li>[6] NXP.COM – NFC tech.</li>
-      <li>[7] APPLE.COM – Official announcements.</li>
-      <li>[8] Apple — iPhone 17 (newsroom)</li>
-      <li>[9] Apple — iPhone Air (newsroom)</li>
-      <li>[10] Apple — AirPods Pro 3 (newsroom)</li>
-      <li>[11] Apple — Apple Watch Series 11 (newsroom)</li>
-      <li>[12] Apple — M3 Ultra (Mar 5, 2025)</li>
-      <li>[13] Apple — MacBook Air with M4 (Mar 5, 2025)</li>
-      <li>[14] MacRumors — N1 chip analysis (Sept 13, 2025)</li>
+      <li>APPLE.FANDOM.COM – Technical details on A-series SoCs</li>
+      <li>BLOGDOIPHONE.COM – Analyses of S-series</li>
+      <li>QUALCOMM.COM – Historical info on modems</li>
+      <li>BROADCOM.COM – Connectivity components</li>
+      <li>STMICRO.COM – Sensor info</li>
+      <li>NXP.COM – NFC tech</li>
+      <li>APPLE.COM – Official announcements</li>
+      <li>Apple — iPhone 17 (newsroom)</li>
+      <li>Apple — iPhone Air (newsroom)</li>
+      <li>Apple — AirPods Pro 3 (newsroom)</li>
+      <li>Apple — Apple Watch Series 11 (newsroom)</li>
+      <li>Apple — M3 Ultra (Mar 5, 2025)</li>
+      <li>Apple — MacBook Air with M4 (Mar 5, 2025)</li>
+      <li>MacRumors — N1 chip analysis (Sept 13, 2025)</li>
     </ul>
   </div>
+
+  <script>
+    // Système de tooltips dynamiques
+    document.addEventListener('DOMContentLoaded', function() {
+      const cells = document.querySelectorAll('.cell[data-tooltip]');
+      let currentTooltip = null;
+      
+      cells.forEach(cell => {
+        cell.addEventListener('mouseenter', function(e) {
+          // Supprime tooltip précédent
+          if (currentTooltip) {
+            currentTooltip.remove();
+            currentTooltip = null;
+          }
+          
+          const tooltipText = this.getAttribute('data-tooltip');
+          if (!tooltipText) return;
+          
+          // Crée nouveau tooltip
+          const tooltip = document.createElement('div');
+          tooltip.className = 'dynamic-tooltip';
+          tooltip.textContent = tooltipText;
+          document.body.appendChild(tooltip);
+          
+          // Positionne le tooltip
+          const rect = this.getBoundingClientRect();
+          const tooltipRect = tooltip.getBoundingClientRect();
+          
+          let top = rect.bottom + window.scrollY + 10;
+          let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipRect.width / 2);
+          
+          // Ajuste si sort de l'écran à droite
+          if (left + tooltipRect.width > window.innerWidth - 20) {
+            left = window.innerWidth - tooltipRect.width - 20;
+          }
+          
+          // Ajuste si sort de l'écran à gauche
+          if (left < 20) {
+            left = 20;
+          }
+          
+          // Ajuste si sort de l'écran en bas
+          if (top + tooltipRect.height > window.innerHeight + window.scrollY - 20) {
+            top = rect.top + window.scrollY - tooltipRect.height - 10;
+          }
+          
+          tooltip.style.top = top + 'px';
+          tooltip.style.left = left + 'px';
+          
+          // Animation d'apparition
+          setTimeout(() => {
+            tooltip.classList.add('visible');
+          }, 10);
+          
+          currentTooltip = tooltip;
+        });
+        
+        cell.addEventListener('mouseleave', function() {
+          if (currentTooltip) {
+            currentTooltip.classList.remove('visible');
+            setTimeout(() => {
+              if (currentTooltip) {
+                currentTooltip.remove();
+                currentTooltip = null;
+              }
+            }, 300);
+          }
+        });
+      });
+      
+      // Nettoie au scroll pour éviter tooltips flottants
+      let scrollTimeout;
+      window.addEventListener('scroll', function() {
+        if (currentTooltip) {
+          currentTooltip.remove();
+          currentTooltip = null;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
