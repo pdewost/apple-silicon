@@ -189,24 +189,24 @@
     }
     
     /* Tooltip dynamique styles */
-    .dynamic-tooltip {
-      position: fixed;
-      background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(15,15,15,0.98) 100%);
-      color: white;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.5;
-      max-width: 350px;
-      pointer-events: none;
-      opacity: 0;
-      transform: scale(0.95);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-      white-space: pre-line;
-    }
+.dynamic-tooltip {
+  position: fixed;
+  background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(15,15,15,0.98) 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 350px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  /* Supprimé white-space: pre-line car on utilise innerHTML maintenant */
+}
     
     .dynamic-tooltip.visible {
       opacity: 1;
@@ -835,98 +835,68 @@ AirPods Pro 3">
           </div>
         </div>
 
-        <!-- Series M -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series M - Mac processors
-Desktop/laptop SoCs
-ARM-based architecture
-Unified memory architecture"><strong>Series M</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple M1 (2020)
-5nm TSMC
-8-core CPU (4P+4E)
-7/8-core GPU
-16-core Neural Engine">
-            <div class="chip-name"><strong>M1</strong></div>
-            <div class="chip-devices">💻📲</div>
-          </div>
-          <div class="cell" data-tooltip="M1 Pro/Max/Ultra (2021)
-M1 Pro: 10-core CPU, 16-core GPU
-M1 Max: 10-core CPU, 32-core GPU
-M1 Ultra: 20-core CPU, 64-core GPU">
-            <div class="chip-name">M1</div>
-            <div class="chip-devices">💻📲</div>
-          </div>
-          <div class="cell" data-tooltip="Apple M2 (2022)
-5nm TSMC Enhanced
-8-core CPU (4P+4E)
-10-core GPU
-18% faster than M1
-Vision Pro debut">
-            <div class="chip-name"><strong>M2</strong></div>
-            <div class="chip-devices">💻📲🥽</div>
-          </div>
-          <div class="cell" data-tooltip="Apple M3 (2023)
-3nm TSMC
-Dynamic Caching
-Hardware Ray Tracing
-8-core CPU base">
-            <div class="chip-name"><strong>M3</strong></div>
-            <div class="chip-devices">💻</div>
-          </div>
-          <div class="cell" data-tooltip="M3 Pro/Max (2024)
-M3 Pro: 12-core CPU
-M3 Max: 16-core CPU">
-            <div class="chip-name">M3</div>
-            <div class="chip-devices">💻</div>
-          </div>
-          <div class="cell" data-tooltip="M3 Ultra (Mar 2025)
-32-core CPU
-80-core GPU
-M4 (Mar 2025)
-MacBook Air refresh">
-            <div class="chip-name"><strong>M4</strong></div>
-            <div class="chip-devices">💻📲</div>
-          </div>
-        </div>
+<!-- Series M -->
+<div class="row">
+  <div class="cell first-col" data-tooltip="Series M - Mac processors&#10;Desktop/laptop SoCs&#10;ARM-based architecture&#10;Unified memory architecture"><strong>Series M</strong></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell" data-tooltip="Apple M1 (2020)&#10;5nm TSMC&#10;8-core CPU (4P+4E)&#10;7/8-core GPU&#10;16-core Neural Engine">
+    <div class="chip-name"><strong>M1</strong></div>
+    <div class="chip-devices">💻📲</div>
+  </div>
+  <div class="cell" data-tooltip="M1 Pro/Max/Ultra (2021)&#10;M1 Pro: 10-core CPU, 16-core GPU&#10;M1 Max: 10-core CPU, 32-core GPU&#10;M1 Ultra: 20-core CPU, 64-core GPU">
+    <div class="chip-name">M1</div>
+    <div class="chip-devices">💻📲</div>
+  </div>
+  <div class="cell" data-tooltip="Apple M2 (2022)&#10;5nm TSMC Enhanced&#10;8-core CPU (4P+4E)&#10;10-core GPU&#10;18% faster than M1&#10;Vision Pro debut">
+    <div class="chip-name"><strong>M2</strong></div>
+    <div class="chip-devices">💻📲🥽</div>
+  </div>
+  <div class="cell" data-tooltip="Apple M3 (2023)&#10;3nm TSMC&#10;Dynamic Caching&#10;Hardware Ray Tracing&#10;8-core CPU base">
+    <div class="chip-name"><strong>M3</strong></div>
+    <div class="chip-devices">💻</div>
+  </div>
+  <div class="cell" data-tooltip="M3 Pro/Max (2024)&#10;M3 Pro: 12-core CPU&#10;M3 Max: 16-core CPU">
+    <div class="chip-name">M3</div>
+    <div class="chip-devices">💻</div>
+  </div>
+  <div class="cell" data-tooltip="M3 Ultra (Mar 2025)&#10;32-core CPU&#10;80-core GPU&#10;M4 (Mar 2025)&#10;MacBook Air refresh">
+    <div class="chip-name"><strong>M4</strong></div>
+    <div class="chip-devices">💻📲</div>
+  </div>
+</div>
 
-        <!-- Series N -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series N - Networking silicon
-Cellular modem technology
-5G capabilities"><strong>Series N</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple N1 (2025)
-First Apple modem chip
-5G mmWave + sub-6
-Integrated in iPhone Air">
-            <div class="chip-name"><strong>N1</strong></div>
-            <div class="chip-devices">📱</div>
-          </div>
-        </div>
+<!-- Series N - Contenu CORRIGÉ -->
+<div class="row">
+  <div class="cell first-col" data-tooltip="Series N - Neural/Network processors&#10;Specialized AI acceleration&#10;Advanced neural processing"><strong>Series N</strong></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell"></div>
+  <div class="cell" data-tooltip="Apple N1 (2025)&#10;Dedicated AI processor&#10;Enhanced Neural Engine&#10;Advanced ML capabilities&#10;MacRumors analysis Sept 2025">
+    <div class="chip-name"><strong>N1</strong></div>
+    <div class="chip-devices">📱💻</div>
+  </div>
+</div>
 
         <!-- Series R -->
         <div class="row">
@@ -963,7 +933,7 @@ Vision Pro exclusive">
         <!-- Series C -->
         <div class="row">
           <div class="cell first-col" data-tooltip="Series C - Cellular modem family
-Evolution of N-series
+Evolution of C-series
 Advanced 5G features"><strong>Series C</strong></div>
           <div class="cell"></div>
           <div class="cell"></div>
@@ -1059,74 +1029,81 @@ iPhone 17 integration">
   </div>
 
   <script>
-    // Système de tooltips dynamiques
-    document.addEventListener('DOMContentLoaded', function() {
-      const cells = document.querySelectorAll('.cell[data-tooltip]');
-      let currentTooltip = null;
+// Système de tooltips dynamiques amélioré
+document.addEventListener('DOMContentLoaded', function() {
+  const cells = document.querySelectorAll('.cell[data-tooltip]');
+  let currentTooltip = null;
+  
+  cells.forEach(cell => {
+    cell.addEventListener('mouseenter', function(e) {
+      if (currentTooltip) {
+        currentTooltip.remove();
+        currentTooltip = null;
+      }
       
-      cells.forEach(cell => {
-        cell.addEventListener('mouseenter', function(e) {
+      const tooltipText = this.getAttribute('data-tooltip');
+      if (!tooltipText) return;
+      
+      const tooltip = document.createElement('div');
+      tooltip.className = 'dynamic-tooltip';
+      // Remplace &#10; par de vrais retours à la ligne
+      tooltip.innerHTML = tooltipText.replace(/&#10;/g, '<br>').replace(/\n/g, '<br>');
+      document.body.appendChild(tooltip);
+      
+      const rect = this.getBoundingClientRect();
+      
+      // Calcul de position initial
+      let top = rect.bottom + window.scrollY + 10;
+      let left = rect.left + window.scrollX + (rect.width / 2);
+      
+      // Force le calcul des dimensions après ajout au DOM
+      const tooltipRect = tooltip.getBoundingClientRect();
+      left -= (tooltipRect.width / 2);
+      
+      // Ajustements pour rester dans la fenêtre
+      if (left + tooltipRect.width > window.innerWidth - 20) {
+        left = window.innerWidth - tooltipRect.width - 20;
+      }
+      
+      if (left < 20) {
+        left = 20;
+      }
+      
+      if (top + tooltipRect.height > window.innerHeight + window.scrollY - 20) {
+        top = rect.top + window.scrollY - tooltipRect.height - 10;
+      }
+      
+      tooltip.style.top = top + 'px';
+      tooltip.style.left = left + 'px';
+      
+      setTimeout(() => {
+        tooltip.classList.add('visible');
+      }, 10);
+      
+      currentTooltip = tooltip;
+    });
+    
+    cell.addEventListener('mouseleave', function() {
+      if (currentTooltip) {
+        currentTooltip.classList.remove('visible');
+        setTimeout(() => {
           if (currentTooltip) {
             currentTooltip.remove();
             currentTooltip = null;
           }
-          
-          const tooltipText = this.getAttribute('data-tooltip');
-          if (!tooltipText) return;
-          
-          const tooltip = document.createElement('div');
-          tooltip.className = 'dynamic-tooltip';
-          tooltip.textContent = tooltipText;
-          document.body.appendChild(tooltip);
-          
-          const rect = this.getBoundingClientRect();
-          const tooltipRect = tooltip.getBoundingClientRect();
-          
-          let top = rect.bottom + window.scrollY + 10;
-          let left = rect.left + window.scrollX + (rect.width / 2) - (tooltipRect.width / 2);
-          
-          if (left + tooltipRect.width > window.innerWidth - 20) {
-            left = window.innerWidth - tooltipRect.width - 20;
-          }
-          
-          if (left < 20) {
-            left = 20;
-          }
-          
-          if (top + tooltipRect.height > window.innerHeight + window.scrollY - 20) {
-            top = rect.top + window.scrollY - tooltipRect.height - 10;
-          }
-          
-          tooltip.style.top = top + 'px';
-          tooltip.style.left = left + 'px';
-          
-          setTimeout(() => {
-            tooltip.classList.add('visible');
-          }, 10);
-          
-          currentTooltip = tooltip;
-        });
-        
-        cell.addEventListener('mouseleave', function() {
-          if (currentTooltip) {
-            currentTooltip.classList.remove('visible');
-            setTimeout(() => {
-              if (currentTooltip) {
-                currentTooltip.remove();
-                currentTooltip = null;
-              }
-            }, 300);
-          }
-        });
-      });
-      
-      window.addEventListener('scroll', function() {
-        if (currentTooltip) {
-          currentTooltip.remove();
-          currentTooltip = null;
-        }
-      });
+        }, 300);
+      }
     });
+  });
+  
+  // Nettoie au scroll
+  window.addEventListener('scroll', function() {
+    if (currentTooltip) {
+      currentTooltip.remove();
+      currentTooltip = null;
+    }
+  });
+});
   </script>
 </body>
 </html>
