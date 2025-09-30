@@ -1,11 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Apple Silicon Saga</title>
+  
+  <!-- ============================================
+       SEO : Métadonnées essentielles
+       ============================================ -->
+  <title>The Apple Silicon Saga (2010-2025) | Timeline des processeurs Apple</title>
+  <meta name="description" content="Timeline interactive de l'évolution des processeurs Apple : Series A, M, S, H, U, W, N, R, C. De l'A4 (2010) au A19 et M4 (2025). Visualisation complète avec détails techniques.">
+  <meta name="keywords" content="Apple Silicon, M1, M2, M3, M4, A-series, processeurs Apple, timeline, ARM, SoC, iPhone, Mac, iPad">
+  <meta name="author" content="Paul Dewost">
+  <link rel="canonical" href="https://pdewost.github.io/apple-silicon/">
+  
+  <!-- Open Graph (Facebook, LinkedIn) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="The Apple Silicon Saga (2010-2025)">
+  <meta property="og:description" content="Timeline interactive complète de l'évolution des processeurs Apple sur 15 ans. Découvrez les séries A, M, S, H, U, W, N, R et C.">
+  <meta property="og:url" content="https://pdewost.github.io/apple-silicon/">
+  <meta property="og:image" content="https://pdewost.github.io/apple-silicon/preview.png">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Apple Silicon Saga">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Apple Silicon Saga (2010-2025)">
+  <meta name="twitter:description" content="15 ans d'évolution des processeurs Apple en une timeline interactive">
+  <meta name="twitter:image" content="https://pdewost.github.io/apple-silicon/preview.png">
+  <meta name="twitter:creator" content="@pdewost">
+  
+  <!-- JSON-LD pour Google Rich Results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "The Apple Silicon Saga",
+    "description": "Timeline interactive des processeurs Apple de 2010 à 2025",
+    "url": "https://pdewost.github.io/apple-silicon/",
+    "author": {
+      "@type": "Person",
+      "name": "Paul Dewost"
+    },
+    "datePublished": "2025-09-17",
+    "inLanguage": "fr-FR"
+  }
+  </script>
+  
+  <!-- Fonts Google avec optimisation -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+  
   <style>
+    /* ============================================
+       RESET & BASE STYLES
+       ============================================ */
     * { 
       box-sizing: border-box; 
     }
@@ -28,7 +77,9 @@
       font-weight: 700;
     }
 
-    /* Wrapper pour permettre tooltips + scroll */
+    /* ============================================
+       TIMELINE DESKTOP : Grid horizontal scrollable
+       ============================================ */
     .timeline-wrapper {
       background: white;
       border-radius: 12px;
@@ -46,7 +97,7 @@
       padding-right: 20px;
     }
 
-    /* Grid: 1 fixed first col + 16 years = 17 columns */
+    /* Grid: 1 colonne fixe + 16 années = 17 colonnes */
     .header-row, .rows .row {
       display: grid;
       grid-template-columns: 140px repeat(16, 120px);
@@ -54,7 +105,9 @@
       width: max-content;
     }
 
-    /* Header row styling */
+    /* ============================================
+       HEADER ROW : Sticky en haut
+       ============================================ */
     .header-row {
       background: linear-gradient(135deg, #1a1a2e 0%, #0f0f0f 100%);
       position: sticky;
@@ -77,6 +130,7 @@
       justify-content: center;
     }
     
+    /* Première colonne sticky à gauche */
     .header-row .cell.first-col {
       text-align: left;
       justify-content: flex-start;
@@ -88,7 +142,9 @@
       box-shadow: 2px 0 4px rgba(0,0,0,0.1);
     }
 
-    /* Data rows styling */
+    /* ============================================
+       DATA ROWS : Lignes de données
+       ============================================ */
     .rows {
       background: white;
     }
@@ -103,7 +159,7 @@
       z-index: 5;
     }
     
-    /* Zebra striping */
+    /* Zebra striping pour meilleure lisibilité */
     .rows .row:nth-child(odd)  { 
       background-color: #ffffff; 
     }
@@ -111,7 +167,7 @@
       background-color: #f8f9fa; 
     }
     
-    /* Cellules avec structure uniforme */
+    /* Structure des cellules */
     .rows .row .cell {
       padding: 8px;
       text-align: center;
@@ -129,7 +185,7 @@
       cursor: default;
     }
     
-    /* Style pour le nom du chip */
+    /* Nom du chip */
     .chip-name {
       font-weight: 700;
       color: #1a1a2e;
@@ -138,13 +194,13 @@
       line-height: 1.2;
     }
     
-    /* Style pour les versions continues */
+    /* Versions continues (non bold) */
     .chip-name:not(:has(strong)) {
       font-weight: 300;
       color: #666;
     }
     
-    /* Container pour les emojis */
+    /* Container des emojis devices */
     .chip-devices {
       display: flex;
       flex-direction: row;
@@ -156,7 +212,7 @@
       line-height: 1;
     }
 
-    /* First column sticky */
+    /* Première colonne sticky à gauche */
     .rows .row .cell.first-col {
       font-weight: 700;
       font-size: 18px;
@@ -172,12 +228,15 @@
       box-shadow: 2px 0 4px rgba(0,0,0,0.05);
     }
     
-    /* Indicateur pour tooltips */
+    /* ============================================
+       TOOLTIPS : Info-bulles interactives
+       ============================================ */
     .cell[data-tooltip] {
       cursor: help;
       position: relative;
     }
     
+    /* Indicateur visuel de présence d'un tooltip */
     .cell[data-tooltip]:not(.first-col)::after {
       content: "•";
       position: absolute;
@@ -188,32 +247,33 @@
       opacity: 0.5;
     }
     
-    /* Tooltip dynamique styles */
-.dynamic-tooltip {
-  position: fixed;
-  background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(15,15,15,0.98) 100%);
-  color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  max-width: 350px;
-  pointer-events: none;
-  opacity: 0;
-  transform: scale(0.95);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.1);
-  /* Supprimé white-space: pre-line car on utilise innerHTML maintenant */
-}
+    /* Style du tooltip dynamique */
+    .dynamic-tooltip {
+      position: fixed;
+      background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(15,15,15,0.98) 100%);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 350px;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
     
     .dynamic-tooltip.visible {
       opacity: 1;
       transform: scale(1);
     }
     
-    /* Legend */
+    /* ============================================
+       LEGEND : Légende des emojis
+       ============================================ */
     .legend {
       margin: 30px auto;
       padding: 24px;
@@ -254,7 +314,9 @@
       font-weight: 500;
     }
 
-    /* References */
+    /* ============================================
+       REFERENCES : Section bibliographique
+       ============================================ */
     .references {
       max-width: 900px;
       margin: 30px auto;
@@ -302,7 +364,9 @@
       max-width: 200px;
     }
     
-    /* Animation */
+    /* ============================================
+       ANIMATIONS : Apparition progressive des lignes
+       ============================================ */
     @keyframes fadeIn {
       from { 
         opacity: 0; 
@@ -319,6 +383,7 @@
       opacity: 0;
     }
     
+    /* Délais échelonnés pour effet cascade */
     .rows .row:nth-child(1) { animation-delay: 0.05s; }
     .rows .row:nth-child(2) { animation-delay: 0.10s; }
     .rows .row:nth-child(3) { animation-delay: 0.15s; }
@@ -329,30 +394,159 @@
     .rows .row:nth-child(8) { animation-delay: 0.40s; }
     .rows .row:nth-child(9) { animation-delay: 0.45s; }
 
-    /* Responsive */
+    /* ============================================
+       MOBILE VIEW : Vue alternative en accordéon
+       ============================================ */
+    .mobile-view {
+      display: none;
+      padding: 0;
+    }
+    
+    .mobile-series {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .mobile-series-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #0f0f0f 100%);
+      color: white;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .mobile-series-header:active {
+      background: linear-gradient(135deg, #2a2a3e 0%, #1f1f1f 100%);
+    }
+    
+    .mobile-series-toggle {
+      font-size: 24px;
+      transition: transform 0.3s;
+    }
+    
+    .mobile-series-header.expanded .mobile-series-toggle {
+      transform: rotate(180deg);
+    }
+    
+    .mobile-series-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    
+    .mobile-series-content.expanded {
+      max-height: 5000px;
+    }
+    
+    .mobile-chip {
+      padding: 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .mobile-chip:last-child {
+      border-bottom: none;
+    }
+    
+    .mobile-chip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .mobile-chip-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    
+    .mobile-chip-year {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .mobile-chip-devices {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .mobile-chip-details {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #495057;
+    }
+
+    /* ============================================
+       RESPONSIVE : Adaptations mobile/tablette
+       ============================================ */
     @media (max-width: 768px) {
       body {
         padding: 10px;
       }
       
       h1 {
-        font-size: 2em;
+        font-size: 1.8em;
+        margin-bottom: 20px;
       }
       
-      .header-row, .rows .row {
-        grid-template-columns: 100px repeat(16, 110px);
+      /* Cache la vue desktop sur mobile */
+      .timeline-wrapper {
+        display: none;
       }
       
-      .chip-devices {
-        font-size: 18px;
+      /* Affiche la vue mobile */
+      .mobile-view {
+        display: block;
+      }
+      
+      /* Indicateur tooltip plus visible sur mobile */
+      .cell[data-tooltip]:not(.first-col)::after {
+        content: "ℹ️";
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      
+      /* Tooltip adapté aux petits écrans */
+      .dynamic-tooltip {
+        max-width: calc(100vw - 40px);
+        font-size: 15px;
       }
       
       .legend {
         grid-template-columns: repeat(2, 1fr);
+        padding: 16px;
+      }
+      
+      .legend-item {
+        padding: 8px 10px;
+      }
+      
+      .legend-emoji {
+        font-size: 22px;
+      }
+      
+      .legend-text {
+        font-size: 13px;
+      }
+      
+      .references {
+        padding: 16px;
+        font-size: 13px;
       }
     }
     
-    /* Mode sombre */
+    /* ============================================
+       DARK MODE : Mode sombre automatique
+       ============================================ */
     @media (prefers-color-scheme: dark) {
       body {
         background: linear-gradient(135deg, #1a1a2e 0%, #0f0f0f 100%);
@@ -364,7 +558,8 @@
       
       .timeline-wrapper,
       .legend,
-      .references {
+      .references,
+      .mobile-series {
         background: #2d2d30;
         color: #f0f0f0;
       }
@@ -412,588 +607,936 @@
       .references li {
         color: #b0b0b0;
       }
+      
+      .mobile-chip {
+        border-bottom-color: #404040;
+      }
+      
+      .mobile-chip-name {
+        color: #f0f0f0;
+      }
+      
+      .mobile-chip-details {
+        color: #b0b0b0;
+      }
+    }
+    
+    /* ============================================
+       NOSCRIPT : Fallback sans JavaScript
+       ============================================ */
+    .noscript-warning {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+      color: #856404;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
+  <!-- Avertissement si JavaScript désactivé -->
+  <noscript>
+    <div class="noscript-warning" role="alert">
+      ⚠️ JavaScript est requis pour les tooltips interactifs et la vue mobile optimisée. Veuillez l'activer pour une meilleure expérience.
+    </div>
+  </noscript>
+
   <h1>The Apple Silicon Saga</h1>
 
-  <div class="timeline-wrapper">
+  <!-- ============================================
+       VUE DESKTOP : Timeline horizontale scrollable
+       ============================================ -->
+  <div class="timeline-wrapper" role="table" aria-label="Timeline des processeurs Apple de 2010 à 2025">
     <div class="timeline-container">
-      <!-- Header -->
-      <div class="header-row">
-        <div class="cell first-col">Series</div>
-        <div class="cell">2010</div>
-        <div class="cell">2011</div>
-        <div class="cell">2012</div>
-        <div class="cell">2013</div>
-        <div class="cell">2014</div>
-        <div class="cell">2015</div>
-        <div class="cell">2016</div>
-        <div class="cell">2017</div>
-        <div class="cell">2018</div>
-        <div class="cell">2019</div>
-        <div class="cell">2020</div>
-        <div class="cell">2021</div>
-        <div class="cell">2022</div>
-        <div class="cell">2023</div>
-        <div class="cell">2024</div>
-        <div class="cell">2025</div>
+      <!-- Header avec années -->
+      <div class="header-row" role="row">
+        <div class="cell first-col" role="columnheader">Series</div>
+        <div class="cell" role="columnheader">2010</div>
+        <div class="cell" role="columnheader">2011</div>
+        <div class="cell" role="columnheader">2012</div>
+        <div class="cell" role="columnheader">2013</div>
+        <div class="cell" role="columnheader">2014</div>
+        <div class="cell" role="columnheader">2015</div>
+        <div class="cell" role="columnheader">2016</div>
+        <div class="cell" role="columnheader">2017</div>
+        <div class="cell" role="columnheader">2018</div>
+        <div class="cell" role="columnheader">2019</div>
+        <div class="cell" role="columnheader">2020</div>
+        <div class="cell" role="columnheader">2021</div>
+        <div class="cell" role="columnheader">2022</div>
+        <div class="cell" role="columnheader">2023</div>
+        <div class="cell" role="columnheader">2024</div>
+        <div class="cell" role="columnheader">2025</div>
       </div>
 
       <div class="rows">
-        <!-- Series A avec nouvelle structure -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series A - Application Processors
-Main SoC for iPhone and iPad
-Started: 2010 with A4
-Current: A19 (2025)
-Key innovations:
-- First 64-bit mobile (A7, 2013)
-- Neural Engine (A11, 2017)
-- 3nm process (A17, 2023)"><strong>Series A</strong></div>
-          <div class="cell" data-tooltip="Apple A4 (2010)
-45nm Samsung process
-1 GHz ARM Cortex-A8
-PowerVR SGX535 GPU
-First used in: iPhone 4, iPad 1, iPod Touch 4, Apple TV 2">
+        <!-- Series A : Processeurs d'application -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series A - Application Processors&#10;Main SoC for iPhone and iPad&#10;Started: 2010 with A4&#10;Current: A19 (2025)&#10;Key innovations:&#10;- First 64-bit mobile (A7, 2013)&#10;- Neural Engine (A11, 2017)&#10;- 3nm process (A17, 2023)"><strong>Series A</strong></div>
+          <div class="cell" role="gridcell" aria-label="A4 - 2010 - iPhone, iPad, iPod Touch, Apple TV" data-tooltip="Apple A4 (2010)&#10;45nm Samsung process&#10;1 GHz ARM Cortex-A8&#10;PowerVR SGX535 GPU&#10;First used in: iPhone 4, iPad 1, iPod Touch 4, Apple TV 2">
             <div class="chip-name"><strong>A4</strong></div>
             <div class="chip-devices">📱📲🎵📺</div>
           </div>
-          <div class="cell" data-tooltip="Apple A5 (2011)
-45nm → 32nm Samsung
-Dual-core ARM Cortex-A9
-Dual-core PowerVR SGX543MP2
-First used in: iPhone 4S, iPad 2, iPod Touch 5">
+          <div class="cell" role="gridcell" aria-label="A5 - 2011 - iPhone, iPad, iPod Touch" data-tooltip="Apple A5 (2011)&#10;45nm → 32nm Samsung&#10;Dual-core ARM Cortex-A9&#10;Dual-core PowerVR SGX543MP2&#10;First used in: iPhone 4S, iPad 2, iPod Touch 5">
             <div class="chip-name"><strong>A5</strong></div>
             <div class="chip-devices">📱📲🎵</div>
           </div>
-          <div class="cell" data-tooltip="Apple A6 (2012)
-32nm Samsung
-First custom Apple CPU design
-Triple-core PowerVR SGX543MP3
-First used in: iPhone 5">
+          <div class="cell" role="gridcell" aria-label="A6 - 2012 - iPhone" data-tooltip="Apple A6 (2012)&#10;32nm Samsung&#10;First custom Apple CPU design&#10;Triple-core PowerVR SGX543MP3&#10;First used in: iPhone 5">
             <div class="chip-name"><strong>A6</strong></div>
             <div class="chip-devices">📱</div>
           </div>
-          <div class="cell" data-tooltip="Apple A7 (2013)
-28nm Samsung
-First 64-bit mobile processor
-PowerVR G6430
-First used in: iPhone 5S, iPad Air">
+          <div class="cell" role="gridcell" aria-label="A7 - 2013 - iPhone, iPad" data-tooltip="Apple A7 (2013)&#10;28nm Samsung&#10;First 64-bit mobile processor&#10;PowerVR G6430&#10;First used in: iPhone 5S, iPad Air">
             <div class="chip-name"><strong>A7</strong></div>
             <div class="chip-devices">📱📲</div>
           </div>
-          <div class="cell" data-tooltip="Apple A8 (2014)
-20nm TSMC
-1.4 GHz dual-core
-PowerVR GX6450
-First used in: iPhone 6/6 Plus, HomePod">
+          <div class="cell" role="gridcell" aria-label="A8 - 2014 - iPhone, HomePod" data-tooltip="Apple A8 (2014)&#10;20nm TSMC&#10;1.4 GHz dual-core&#10;PowerVR GX6450&#10;First used in: iPhone 6/6 Plus, HomePod">
             <div class="chip-name"><strong>A8</strong></div>
             <div class="chip-devices">📱🔊</div>
           </div>
-          <div class="cell" data-tooltip="Apple A9 (2015)
-16nm TSMC/14nm Samsung
-1.85 GHz dual-core
-PowerVR GT7600
-First used in: iPhone 6S/6S Plus, iPad 5">
+          <div class="cell" role="gridcell" aria-label="A9 - 2015 - iPhone, iPad" data-tooltip="Apple A9 (2015)&#10;16nm TSMC/14nm Samsung&#10;1.85 GHz dual-core&#10;PowerVR GT7600&#10;First used in: iPhone 6S/6S Plus, iPad 5">
             <div class="chip-name"><strong>A9</strong></div>
             <div class="chip-devices">📱📲</div>
           </div>
-          <div class="cell" data-tooltip="Apple A10 Fusion (2016)
-16nm TSMC
-2+2 big.LITTLE design
-PowerVR GT7600 Plus
-First used in: iPhone 7/7 Plus, iPad 6, Apple TV 4K">
+          <div class="cell" role="gridcell" aria-label="A10 - 2016 - iPhone, iPad, Apple TV" data-tooltip="Apple A10 Fusion (2016)&#10;16nm TSMC&#10;2+2 big.LITTLE design&#10;PowerVR GT7600 Plus&#10;First used in: iPhone 7/7 Plus, iPad 6, Apple TV 4K">
             <div class="chip-name"><strong>A10</strong></div>
             <div class="chip-devices">📱📲📺</div>
           </div>
-          <div class="cell" data-tooltip="Apple A11 Bionic (2017)
-10nm TSMC
-First with Neural Engine
-Apple-designed GPU (3-core)
-First used in: iPhone 8/8 Plus/X">
+          <div class="cell" role="gridcell" aria-label="A11 - 2017 - iPhone" data-tooltip="Apple A11 Bionic (2017)&#10;10nm TSMC&#10;First with Neural Engine&#10;Apple-designed GPU (3-core)&#10;First used in: iPhone 8/8 Plus/X">
             <div class="chip-name"><strong>A11</strong></div>
             <div class="chip-devices">📱</div>
           </div>
-          <div class="cell" data-tooltip="Apple A12 Bionic (2018)
-7nm TSMC
-8-core Neural Engine
-4-core GPU
-First used in: iPhone XS/XR, iPad Air 3, Apple TV 4K Gen 2">
+          <div class="cell" role="gridcell" aria-label="A12 - 2018 - iPhone, iPad, iPod Touch, Apple TV" data-tooltip="Apple A12 Bionic (2018)&#10;7nm TSMC&#10;8-core Neural Engine&#10;4-core GPU&#10;First used in: iPhone XS/XR, iPad Air 3, Apple TV 4K Gen 2">
             <div class="chip-name"><strong>A12</strong></div>
             <div class="chip-devices">📱📲🎵📺</div>
           </div>
-          <div class="cell" data-tooltip="Apple A13 Bionic (2019)
-7nm+ TSMC EUV
-8-core Neural Engine (20% faster)
-4-core GPU
-First used in: iPhone 11 series">
+          <div class="cell" role="gridcell" aria-label="A13 - 2019 - iPhone" data-tooltip="Apple A13 Bionic (2019)&#10;7nm+ TSMC EUV&#10;8-core Neural Engine (20% faster)&#10;4-core GPU&#10;First used in: iPhone 11 series">
             <div class="chip-name"><strong>A13</strong></div>
             <div class="chip-devices">📱</div>
           </div>
-          <div class="cell" data-tooltip="Apple A14 Bionic (2020)
-5nm TSMC
-16-core Neural Engine
-4-core GPU
-First used in: iPhone 12 series, iPad Air 4">
+          <div class="cell" role="gridcell" aria-label="A14 - 2020 - iPhone, iPad" data-tooltip="Apple A14 Bionic (2020)&#10;5nm TSMC&#10;16-core Neural Engine&#10;4-core GPU&#10;First used in: iPhone 12 series, iPad Air 4">
             <div class="chip-name"><strong>A14</strong></div>
             <div class="chip-devices">📱📲</div>
           </div>
-          <div class="cell" data-tooltip="Apple A15 Bionic (2021)
-5nm TSMC Enhanced
-16-core Neural Engine
-5-core GPU (Pro models)
-First used in: iPhone 13 series, iPad Mini 6">
+          <div class="cell" role="gridcell" aria-label="A15 - 2021 - iPhone, iPad" data-tooltip="Apple A15 Bionic (2021)&#10;5nm TSMC Enhanced&#10;16-core Neural Engine&#10;5-core GPU (Pro models)&#10;First used in: iPhone 13 series, iPad Mini 6">
             <div class="chip-name"><strong>A15</strong></div>
             <div class="chip-devices">📱📲</div>
           </div>
-          <div class="cell" data-tooltip="Apple A16 Bionic (2022)
-4nm TSMC
-16-core Neural Engine
-5-core GPU
-First used in: iPhone 14 Pro/Pro Max">
+          <div class="cell" role="gridcell" aria-label="A16 - 2022 - iPhone" data-tooltip="Apple A16 Bionic (2022)&#10;4nm TSMC&#10;16-core Neural Engine&#10;5-core GPU&#10;First used in: iPhone 14 Pro/Pro Max">
             <div class="chip-name"><strong>A16</strong></div>
             <div class="chip-devices">📱</div>
           </div>
-          <div class="cell" data-tooltip="Apple A17 Pro (2023)
-3nm TSMC
-16-core Neural Engine (2x faster)
-6-core GPU with Ray Tracing
-First used in: iPhone 15 Pro/Pro Max">
+          <div class="cell" role="gridcell" aria-label="A17 - 2023 - iPhone" data-tooltip="Apple A17 Pro (2023)&#10;3nm TSMC&#10;16-core Neural Engine (2x faster)&#10;6-core GPU with Ray Tracing&#10;First used in: iPhone 15 Pro/Pro Max">
             <div class="chip-name"><strong>A17</strong></div>
             <div class="chip-devices">📱</div>
           </div>
-          <div class="cell" data-tooltip="Apple A18 (2024)
-3nm TSMC Enhanced
-17-core Neural Engine
-6-core GPU
-First used in: iPhone 16 series">
+          <div class="cell" role="gridcell" aria-label="A18 - 2024 - iPhone" data-tooltip="Apple A18 (2024)&#10;3nm TSMC Enhanced&#10;17-core Neural Engine&#10;6-core GPU&#10;First used in: iPhone 16 series">
             <div class="chip-name"><strong>A18</strong></div>
             <div class="chip-devices">📱</div>
           </div>
-          <div class="cell" data-tooltip="Apple A19 (2025)
-2nm TSMC (rumored)
-Enhanced AI capabilities
-First used in: iPhone 17 series">
+          <div class="cell" role="gridcell" aria-label="A19 - 2025 - iPhone" data-tooltip="Apple A19 (2025)&#10;2nm TSMC (rumored)&#10;Enhanced AI capabilities&#10;First used in: iPhone 17 series">
             <div class="chip-name"><strong>A19</strong></div>
             <div class="chip-devices">📱</div>
           </div>
         </div>
 
-        <!-- Series S avec nouvelle structure -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series S - System in Package
-Designed for Apple Watch
-Based on A-series architecture
-Integrated memory and storage"><strong>Series S</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple S1 (2015)
-28nm Samsung
-520 MHz ARM Cortex-A7
-First Apple Watch chip">
+        <!-- Series S : Apple Watch -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series S - System in Package&#10;Designed for Apple Watch&#10;Based on A-series architecture&#10;Integrated memory and storage"><strong>Series S</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="S1 - 2015 - Apple Watch" data-tooltip="Apple S1 (2015)&#10;28nm Samsung&#10;520 MHz ARM Cortex-A7&#10;First Apple Watch chip">
             <div class="chip-name"><strong>S1</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S2 (2016)
-Dual-core processor
-Built-in GPS
-50% faster than S1">
+          <div class="cell" role="gridcell" aria-label="S2 - 2016 - Apple Watch" data-tooltip="Apple S2 (2016)&#10;Dual-core processor&#10;Built-in GPS&#10;50% faster than S1">
             <div class="chip-name"><strong>S2</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S3 (2017)
-Dual-core processor
-W2 wireless chip
-70% faster than S2">
+          <div class="cell" role="gridcell" aria-label="S3 - 2017 - Apple Watch" data-tooltip="Apple S3 (2017)&#10;Dual-core processor&#10;W2 wireless chip&#10;70% faster than S2">
             <div class="chip-name"><strong>S3</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S4 (2018)
-64-bit dual-core
-2x faster than S3
-Larger display support">
+          <div class="cell" role="gridcell" aria-label="S4 - 2018 - Apple Watch" data-tooltip="Apple S4 (2018)&#10;64-bit dual-core&#10;2x faster than S3&#10;Larger display support">
             <div class="chip-name"><strong>S4</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S5 (2019)
-Based on S4 architecture
-Compass + Always-On display
-Also in HomePod mini">
+          <div class="cell" role="gridcell" aria-label="S5 - 2019 - Apple Watch, HomePod mini" data-tooltip="Apple S5 (2019)&#10;Based on S4 architecture&#10;Compass + Always-On display&#10;Also in HomePod mini">
             <div class="chip-name"><strong>S5</strong></div>
             <div class="chip-devices">⌚🔊</div>
           </div>
-          <div class="cell" data-tooltip="Apple S6 (2020)
-Based on A13 cores
-20% faster than S5
-Always-On altimeter">
+          <div class="cell" role="gridcell" aria-label="S6 - 2020 - Apple Watch" data-tooltip="Apple S6 (2020)&#10;Based on A13 cores&#10;20% faster than S5&#10;Always-On altimeter">
             <div class="chip-name"><strong>S6</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S7 (2021)
-Same CPU as S6
-33% faster charging
-Also in HomePod mini">
+          <div class="cell" role="gridcell" aria-label="S7 - 2021 - Apple Watch, HomePod mini" data-tooltip="Apple S7 (2021)&#10;Same CPU as S6&#10;33% faster charging&#10;Also in HomePod mini">
             <div class="chip-name"><strong>S7</strong></div>
             <div class="chip-devices">⌚🔊</div>
           </div>
-          <div class="cell" data-tooltip="Apple S8 (2022)
-Same performance as S7
-Crash detection
-Temperature sensing">
+          <div class="cell" role="gridcell" aria-label="S8 - 2022 - Apple Watch" data-tooltip="Apple S8 (2022)&#10;Same performance as S7&#10;Crash detection&#10;Temperature sensing">
             <div class="chip-name"><strong>S8</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S9 (2023)
-4-core Neural Engine
-On-device Siri
-Double Tap gesture">
+          <div class="cell" role="gridcell" aria-label="S9 - 2023 - Apple Watch" data-tooltip="Apple S9 (2023)&#10;4-core Neural Engine&#10;On-device Siri&#10;Double Tap gesture">
             <div class="chip-name"><strong>S9</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S9 (2024)
-Continued production
-Used in Apple Watch SE 3">
+          <div class="cell" role="gridcell" aria-label="S9 - 2024 - Apple Watch" data-tooltip="Apple S9 (2024)&#10;Continued production&#10;Used in Apple Watch SE 3">
             <div class="chip-name">S9</div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple S10 (2025)
-Enhanced health sensors
-Improved battery efficiency">
+          <div class="cell" role="gridcell" aria-label="S10 - 2025 - Apple Watch" data-tooltip="Apple S10 (2025)&#10;Enhanced health sensors&#10;Improved battery efficiency">
             <div class="chip-name"><strong>S10</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
         </div>
 
-        <!-- Series W avec nouvelle structure -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series W - Wireless chips
-Bluetooth and WiFi connectivity
-Used in AirPods and Beats"><strong>Series W</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple W1 (2016)
-First wireless chip
-Class 1 Bluetooth
-Used in: AirPods 1, Beats">
+        <!-- Series W : Wireless -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series W - Wireless chips&#10;Bluetooth and WiFi connectivity&#10;Used in AirPods and Beats"><strong>Series W</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="W1 - 2016 - AirPods, Beats" data-tooltip="Apple W1 (2016)&#10;First wireless chip&#10;Class 1 Bluetooth&#10;Used in: AirPods 1, Beats">
             <div class="chip-name"><strong>W1</strong></div>
             <div class="chip-devices">🎧🎵</div>
           </div>
-          <div class="cell" data-tooltip="Apple W2 (2017)
-WiFi support added
-50% more efficient
-Used in: Apple Watch Series 3">
+          <div class="cell" role="gridcell" aria-label="W2 - 2017 - Apple Watch" data-tooltip="Apple W2 (2017)&#10;WiFi support added&#10;50% more efficient&#10;Used in: Apple Watch Series 3">
             <div class="chip-name"><strong>W2</strong></div>
             <div class="chip-devices">⌚</div>
           </div>
-          <div class="cell" data-tooltip="Apple W3 (2018)
-Introduced with AirPods 2
-Hey Siri support
-Lower latency">
+          <div class="cell" role="gridcell" aria-label="W3 - 2018 - AirPods, Apple Watch" data-tooltip="Apple W3 (2018)&#10;Introduced with AirPods 2&#10;Hey Siri support&#10;Lower latency">
             <div class="chip-name"><strong>W3</strong></div>
             <div class="chip-devices">🎧⌚</div>
           </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">W3</div>
-            <div class="chip-devices">🎧</div>
-          </div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2019 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2020 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2021 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2022 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2023 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2024 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="W3 - 2025 - AirPods"><div class="chip-name">W3</div><div class="chip-devices">🎧</div></div>
         </div>
 
-        <!-- Series U -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series U - Ultra Wideband
-Spatial awareness chip
-Precision Finding capability"><strong>Series U</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple U1 (2019)
-Ultra Wideband chip
-Spatial awareness
-Precision Finding
-First in: iPhone 11">
+        <!-- Series U : Ultra Wideband -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series U - Ultra Wideband&#10;Spatial awareness chip&#10;Precision Finding capability"><strong>Series U</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="U1 - 2019 - iPhone, Apple Watch, AirTag, HomePod" data-tooltip="Apple U1 (2019)&#10;Ultra Wideband chip&#10;Spatial awareness&#10;Precision Finding&#10;First in: iPhone 11">
             <div class="chip-name"><strong>U1</strong></div>
             <div class="chip-devices">📱⌚🏷️🔊</div>
           </div>
-          <div class="cell">
-            <div class="chip-name">U1</div>
-            <div class="chip-devices">📱⌚🏷️🔊</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">U1</div>
-            <div class="chip-devices">📱⌚🏷️🔊</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">U1</div>
-            <div class="chip-devices">📱⌚🏷️🔊</div>
-          </div>
-          <div class="cell" data-tooltip="Apple U2 (2023)
-3x range of U1
-Lower power consumption
-First in: iPhone 15">
+          <div class="cell" role="gridcell" aria-label="U1 - 2020 - iPhone, Apple Watch, AirTag, HomePod"><div class="chip-name">U1</div><div class="chip-devices">📱⌚🏷️🔊</div></div>
+          <div class="cell" role="gridcell" aria-label="U1 - 2021 - iPhone, Apple Watch, AirTag, HomePod"><div class="chip-name">U1</div><div class="chip-devices">📱⌚🏷️🔊</div></div>
+          <div class="cell" role="gridcell" aria-label="U1 - 2022 - iPhone, Apple Watch, AirTag, HomePod"><div class="chip-name">U1</div><div class="chip-devices">📱⌚🏷️🔊</div></div>
+          <div class="cell" role="gridcell" aria-label="U2 - 2023 - iPhone, Apple Watch, AirTag" data-tooltip="Apple U2 (2023)&#10;3x range of U1&#10;Lower power consumption&#10;First in: iPhone 15">
             <div class="chip-name"><strong>U2</strong></div>
             <div class="chip-devices">📱⌚🏷️</div>
           </div>
-          <div class="cell">
-            <div class="chip-name">U2</div>
-            <div class="chip-devices">📱⌚🏷️</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">U2</div>
-            <div class="chip-devices">📱⌚🏷️</div>
-          </div>
+          <div class="cell" role="gridcell" aria-label="U2 - 2024 - iPhone, Apple Watch, AirTag"><div class="chip-name">U2</div><div class="chip-devices">📱⌚🏷️</div></div>
+          <div class="cell" role="gridcell" aria-label="U2 - 2025 - iPhone, Apple Watch, AirTag"><div class="chip-name">U2</div><div class="chip-devices">📱⌚🏷️</div></div>
         </div>
 
-        <!-- Series H -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series H - Headphone chips
-Audio processing
-Active Noise Cancellation"><strong>Series H</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple H1 (2019)
-10 audio cores
-Real-time noise cancellation
-Used in: AirPods Pro/Max">
+        <!-- Series H : Headphone -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series H - Headphone chips&#10;Audio processing&#10;Active Noise Cancellation"><strong>Series H</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="H1 - 2019 - AirPods" data-tooltip="Apple H1 (2019)&#10;10 audio cores&#10;Real-time noise cancellation&#10;Used in: AirPods Pro/Max">
             <div class="chip-name"><strong>H1</strong></div>
             <div class="chip-devices">🎧</div>
           </div>
-          <div class="cell">
-            <div class="chip-name">H1</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">H1</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell" data-tooltip="Apple H2 (2022)
-Advanced computational audio
-2x better ANC than H1
-Used in: AirPods Pro 2">
+          <div class="cell" role="gridcell" aria-label="H1 - 2020 - AirPods"><div class="chip-name">H1</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="H1 - 2021 - AirPods"><div class="chip-name">H1</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="H2 - 2022 - AirPods" data-tooltip="Apple H2 (2022)&#10;Advanced computational audio&#10;2x better ANC than H1&#10;Used in: AirPods Pro 2">
             <div class="chip-name"><strong>H2</strong></div>
             <div class="chip-devices">🎧</div>
           </div>
-          <div class="cell">
-            <div class="chip-name">H2</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell">
-            <div class="chip-name">H2</div>
-            <div class="chip-devices">🎧</div>
-          </div>
-          <div class="cell" data-tooltip="Apple H3 (2025)
-Lossless audio support
-Enhanced spatial audio
-AirPods Pro 3">
+          <div class="cell" role="gridcell" aria-label="H2 - 2023 - AirPods"><div class="chip-name">H2</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="H2 - 2024 - AirPods"><div class="chip-name">H2</div><div class="chip-devices">🎧</div></div>
+          <div class="cell" role="gridcell" aria-label="H3 - 2025 - AirPods" data-tooltip="Apple H3 (2025)&#10;Lossless audio support&#10;Enhanced spatial audio&#10;AirPods Pro 3">
             <div class="chip-name"><strong>H3</strong></div>
             <div class="chip-devices">🎧</div>
           </div>
         </div>
 
-<!-- Series M -->
-<div class="row">
-  <div class="cell first-col" data-tooltip="Series M - Mac processors&#10;Desktop/laptop SoCs&#10;ARM-based architecture&#10;Unified memory architecture"><strong>Series M</strong></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell"></div>
-  <div class="cell" data-tooltip="Apple M1 (2020)&#10;5nm TSMC&#10;8-core CPU (4P+4E)&#10;7/8-core GPU&#10;16-core Neural Engine">
-    <div class="chip-name"><strong>M1</strong></div>
-    <div class="chip-devices">💻📲</div>
-  </div>
-  <div class="cell" data-tooltip="M1 Pro/Max/Ultra (2021)&#10;M1 Pro: 10-core CPU, 16-core GPU&#10;M1 Max: 10-core CPU, 32-core GPU&#10;M1 Ultra: 20-core CPU, 64-core GPU">
-    <div class="chip-name">M1</div>
-    <div class="chip-devices">💻📲</div>
-  </div>
-  <div class="cell" data-tooltip="Apple M2 (2022)&#10;5nm TSMC Enhanced&#10;8-core CPU (4P+4E)&#10;10-core GPU&#10;18% faster than M1&#10;Vision Pro debut">
-    <div class="chip-name"><strong>M2</strong></div>
-    <div class="chip-devices">💻📲🥽</div>
-  </div>
-  <div class="cell" data-tooltip="Apple M3 (2023)&#10;3nm TSMC&#10;Dynamic Caching&#10;Hardware Ray Tracing&#10;8-core CPU base">
-    <div class="chip-name"><strong>M3</strong></div>
-    <div class="chip-devices">💻</div>
-  </div>
-  <div class="cell" data-tooltip="M3 Pro/Max (2024)&#10;M3 Pro: 12-core CPU&#10;M3 Max: 16-core CPU">
-    <div class="chip-name">M3</div>
-    <div class="chip-devices">💻</div>
-  </div>
-  <div class="cell" data-tooltip="M3 Ultra (Mar 2025)&#10;32-core CPU&#10;80-core GPU&#10;M4 (Mar 2025)&#10;MacBook Air refresh">
-    <div class="chip-name"><strong>M4</strong></div>
-    <div class="chip-devices">💻📲</div>
-  </div>
-</div>
-
-<!-- Series N - CORRIGÉ avec les vraies infos -->
-<div class="row">
-  <div class="cell first-col" data-tooltip="Series N - Networking chips&#10;Wireless connectivity processors&#10;Wi-Fi, Bluetooth, Thread management&#10;Replaces Broadcom components"><strong>Series N</strong></div>
-  <div class="cell"></div> <!-- 2010 -->
-  <div class="cell"></div> <!-- 2011 -->
-  <div class="cell"></div> <!-- 2012 -->
-  <div class="cell"></div> <!-- 2013 -->
-  <div class="cell"></div> <!-- 2014 -->
-  <div class="cell"></div> <!-- 2015 -->
-  <div class="cell"></div> <!-- 2016 -->
-  <div class="cell"></div> <!-- 2017 -->
-  <div class="cell"></div> <!-- 2018 -->
-  <div class="cell"></div> <!-- 2019 -->
-  <div class="cell"></div> <!-- 2020 -->
-  <div class="cell"></div> <!-- 2021 -->
-  <div class="cell"></div> <!-- 2022 -->
-  <div class="cell"></div> <!-- 2023 -->
-  <div class="cell"></div> <!-- 2024 -->
-  <!-- 2025 - N1 -->
-  <div class="cell" data-tooltip="Apple N1 (Sept 2025)&#10;First in-house wireless connectivity chip&#10;Replaces Broadcom chips&#10;&#10;Features:&#10;• Wi-Fi 7 support&#10;• Bluetooth 6 connectivity&#10;• Thread protocol support&#10;• Orchestra conductor for all local wireless&#10;&#10;Launched with:&#10;• iPhone 17 series&#10;• iPhone Air">
-    <div class="chip-name"><strong>N1</strong></div>
-    <div class="chip-devices">📱</div>
-  </div>
-</div>
-        <!-- Series R -->
-        <div class="row">
-          <div class="cell first-col" data-tooltip="Series R - Reality/Vision coprocessor
-Handles sensor fusion
-Real-time environment mapping"><strong>Series R</strong></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell"></div>
-          <div class="cell" data-tooltip="Apple R1 (2024)
-12ms photon-to-photon latency
-Sensor fusion processor
-Vision Pro exclusive">
-            <div class="chip-name"><strong>R1</strong></div>
-            <div class="chip-devices">🥽</div>
+        <!-- Series M : Mac processors -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series M - Mac processors&#10;Desktop/laptop SoCs&#10;ARM-based architecture&#10;Unified memory architecture"><strong>Series M</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="M1 - 2020 - Mac, iPad" data-tooltip="Apple M1 (2020)&#10;5nm TSMC&#10;8-core CPU (4P+4E)&#10;7/8-core GPU&#10;16-core Neural Engine">
+            <div class="chip-name"><strong>M1</strong></div>
+            <div class="chip-devices">💻📲</div>
           </div>
-          <div class="cell">
-            <div class="chip-name">R1</div>
-            <div class="chip-devices">🥽</div>
+          <div class="cell" role="gridcell" aria-label="M1 - 2021 - Mac, iPad" data-tooltip="M1 Pro/Max/Ultra (2021)&#10;M1 Pro: 10-core CPU, 16-core GPU&#10;M1 Max: 10-core CPU, 32-core GPU&#10;M1 Ultra: 20-core CPU, 64-core GPU">
+            <div class="chip-name">M1</div>
+            <div class="chip-devices">💻📲</div>
+          </div>
+          <div class="cell" role="gridcell" aria-label="M2 - 2022 - Mac, iPad, Vision Pro" data-tooltip="Apple M2 (2022)&#10;5nm TSMC Enhanced&#10;8-core CPU (4P+4E)&#10;10-core GPU&#10;18% faster than M1&#10;Vision Pro debut">
+            <div class="chip-name"><strong>M2</strong></div>
+            <div class="chip-devices">💻📲🥽</div>
+          </div>
+          <div class="cell" role="gridcell" aria-label="M3 - 2023 - Mac" data-tooltip="Apple M3 (2023)&#10;3nm TSMC&#10;Dynamic Caching&#10;Hardware Ray Tracing&#10;8-core CPU base">
+            <div class="chip-name"><strong>M3</strong></div>
+            <div class="chip-devices">💻</div>
+          </div>
+          <div class="cell" role="gridcell" aria-label="M3 - 2024 - Mac" data-tooltip="M3 Pro/Max (2024)&#10;M3 Pro: 12-core CPU&#10;M3 Max: 16-core CPU">
+            <div class="chip-name">M3</div>
+            <div class="chip-devices">💻</div>
+          </div>
+          <div class="cell" role="gridcell" aria-label="M4 - 2025 - Mac, iPad" data-tooltip="M3 Ultra (Mar 2025)&#10;32-core CPU&#10;80-core GPU&#10;M4 (Mar 2025)&#10;MacBook Air refresh">
+            <div class="chip-name"><strong>M4</strong></div>
+            <div class="chip-devices">💻📲</div>
           </div>
         </div>
 
- <!-- Series C - CORRIGÉ avec C1 et C1X en 2025 -->
-<div class="row">
-  <div class="cell first-col" data-tooltip="Series C - Cellular Modems&#10;Apple's custom 5G modems&#10;Sub-6GHz optimized&#10;Battery efficiency focused"><strong>Series C</strong></div>
-  <div class="cell"></div> <!-- 2010 -->
-  <div class="cell"></div> <!-- 2011 -->
-  <div class="cell"></div> <!-- 2012 -->
-  <div class="cell"></div> <!-- 2013 -->
-  <div class="cell"></div> <!-- 2014 -->
-  <div class="cell"></div> <!-- 2015 -->
-  <div class="cell"></div> <!-- 2016 -->
-  <div class="cell"></div> <!-- 2017 -->
-  <div class="cell"></div> <!-- 2018 -->
-  <div class="cell"></div> <!-- 2019 -->
-  <div class="cell"></div> <!-- 2020 -->
-  <div class="cell"></div> <!-- 2021 -->
-  <div class="cell"></div> <!-- 2022 -->
-  <div class="cell"></div> <!-- 2023 -->
-  <div class="cell"></div> <!-- 2024 - VIDE -->
-  <!-- 2025 - C1 ET C1X -->
-  <div class="cell" data-tooltip="Apple C1 (Feb 2025)&#10;• First custom Apple modem&#10;• 5G sub-6GHz only&#10;• Better efficiency vs Qualcomm&#10;• iPhone 16e (SE 4)&#10;&#10;Apple C1X (Sept 2025)&#10;• Evolution of C1 for ultra-thin designs&#10;• 2x faster than C1 (sub-6GHz)&#10;• 30% better efficiency than Qualcomm X75&#10;• 27h video playback capability&#10;• iPhone Air exclusive&#10;&#10;Key improvements of C1X over C1:&#10;• Doubled sub-6GHz speeds&#10;• Optimized for thinner form factors&#10;• Superior battery management">
-    <div class="chip-name"><strong>C1 / C1X</strong></div>
-    <div class="chip-devices">📱</div>
-  </div>
-</div>
+        <!-- Series N : Networking -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series N - Networking chips&#10;Wireless connectivity processors&#10;Wi-Fi, Bluetooth, Thread management&#10;Replaces Broadcom components"><strong>Series N</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="N1 - 2025 - iPhone" data-tooltip="Apple N1 (Sept 2025)&#10;First in-house wireless connectivity chip&#10;Replaces Broadcom chips&#10;&#10;Features:&#10;• Wi-Fi 7 support&#10;• Bluetooth 6 connectivity&#10;• Thread protocol support&#10;• Orchestra conductor for all local wireless&#10;&#10;Launched with:&#10;• iPhone 17 series&#10;• iPhone Air">
+            <div class="chip-name"><strong>N1</strong></div>
+            <div class="chip-devices">📱</div>
+          </div>
+        </div>
 
-  <!-- Legend et References restent identiques -->
-  <div class="legend">
-    <div class="legend-item">
+        <!-- Series R : Reality -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series R - Reality/Vision coprocessor&#10;Handles sensor fusion&#10;Real-time environment mapping"><strong>Series R</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="R1 - 2024 - Vision Pro" data-tooltip="Apple R1 (2024)&#10;12ms photon-to-photon latency&#10;Sensor fusion processor&#10;Vision Pro exclusive">
+            <div class="chip-name"><strong>R1</strong></div>
+            <div class="chip-devices">🥽</div>
+          </div>
+          <div class="cell" role="gridcell" aria-label="R1 - 2025 - Vision Pro"><div class="chip-name">R1</div><div class="chip-devices">🥽</div></div>
+        </div>
+
+        <!-- Series C : Cellular modems -->
+        <div class="row" role="row">
+          <div class="cell first-col" role="rowheader" data-tooltip="Series C - Cellular Modems&#10;Apple's custom 5G modems&#10;Sub-6GHz optimized&#10;Battery efficiency focused"><strong>Series C</strong></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell"></div>
+          <div class="cell" role="gridcell" aria-label="C1/C1X - 2025 - iPhone" data-tooltip="Apple C1 (Feb 2025)&#10;• First custom Apple modem&#10;• 5G sub-6GHz only&#10;• Better efficiency vs Qualcomm&#10;• iPhone 16e (SE 4)&#10;&#10;Apple C1X (Sept 2025)&#10;• Evolution of C1 for ultra-thin designs&#10;• 2x faster than C1 (sub-6GHz)&#10;• 30% better efficiency than Qualcomm X75&#10;• 27h video playback capability&#10;• iPhone Air exclusive&#10;&#10;Key improvements of C1X over C1:&#10;• Doubled sub-6GHz speeds&#10;• Optimized for thinner form factors&#10;• Superior battery management">
+            <div class="chip-name"><strong>C1 / C1X</strong></div>
+            <div class="chip-devices">📱</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       VUE MOBILE : Accordéons verticaux
+       ============================================ -->
+  <div class="mobile-view" role="region" aria-label="Vue mobile de la timeline Apple Silicon">
+    
+    <!-- Series A Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series A - Application Processors</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A4</span>
+            <span class="mobile-chip-year">2010</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲🎵📺</div>
+          <div class="mobile-chip-details">
+            45nm Samsung • 1 GHz ARM Cortex-A8 • PowerVR SGX535 GPU<br>
+            iPhone 4, iPad 1, iPod Touch 4, Apple TV 2
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A5</span>
+            <span class="mobile-chip-year">2011</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲🎵</div>
+          <div class="mobile-chip-details">
+            45nm → 32nm Samsung • Dual-core ARM Cortex-A9<br>
+            iPhone 4S, iPad 2, iPod Touch 5
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A6</span>
+            <span class="mobile-chip-year">2012</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            32nm Samsung • First custom Apple CPU design<br>
+            iPhone 5
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A7</span>
+            <span class="mobile-chip-year">2013</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲</div>
+          <div class="mobile-chip-details">
+            28nm Samsung • First 64-bit mobile processor<br>
+            iPhone 5S, iPad Air
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A8</span>
+            <span class="mobile-chip-year">2014</span>
+          </div>
+          <div class="mobile-chip-devices">📱🔊</div>
+          <div class="mobile-chip-details">
+            20nm TSMC • 1.4 GHz dual-core<br>
+            iPhone 6/6 Plus, HomePod
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A9</span>
+            <span class="mobile-chip-year">2015</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲</div>
+          <div class="mobile-chip-details">
+            16nm TSMC/14nm Samsung • 1.85 GHz dual-core<br>
+            iPhone 6S/6S Plus, iPad 5
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A10 Fusion</span>
+            <span class="mobile-chip-year">2016</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲📺</div>
+          <div class="mobile-chip-details">
+            16nm TSMC • 2+2 big.LITTLE design<br>
+            iPhone 7/7 Plus, iPad 6, Apple TV 4K
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A11 Bionic</span>
+            <span class="mobile-chip-year">2017</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            10nm TSMC • First with Neural Engine<br>
+            iPhone 8/8 Plus/X
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A12 Bionic</span>
+            <span class="mobile-chip-year">2018</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲🎵📺</div>
+          <div class="mobile-chip-details">
+            7nm TSMC • 8-core Neural Engine<br>
+            iPhone XS/XR, iPad Air 3, Apple TV 4K Gen 2
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A13 Bionic</span>
+            <span class="mobile-chip-year">2019</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            7nm+ TSMC EUV • 8-core Neural Engine<br>
+            iPhone 11 series
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A14 Bionic</span>
+            <span class="mobile-chip-year">2020</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲</div>
+          <div class="mobile-chip-details">
+            5nm TSMC • 16-core Neural Engine<br>
+            iPhone 12 series, iPad Air 4
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A15 Bionic</span>
+            <span class="mobile-chip-year">2021</span>
+          </div>
+          <div class="mobile-chip-devices">📱📲</div>
+          <div class="mobile-chip-details">
+            5nm TSMC Enhanced • 5-core GPU (Pro models)<br>
+            iPhone 13 series, iPad Mini 6
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A16 Bionic</span>
+            <span class="mobile-chip-year">2022</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            4nm TSMC • 16-core Neural Engine<br>
+            iPhone 14 Pro/Pro Max
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A17 Pro</span>
+            <span class="mobile-chip-year">2023</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            3nm TSMC • 6-core GPU with Ray Tracing<br>
+            iPhone 15 Pro/Pro Max
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A18</span>
+            <span class="mobile-chip-year">2024</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            3nm TSMC Enhanced • 17-core Neural Engine<br>
+            iPhone 16 series
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">A19</span>
+            <span class="mobile-chip-year">2025</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            2nm TSMC (rumored) • Enhanced AI capabilities<br>
+            iPhone 17 series
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series M Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series M - Mac Processors</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">M1</span>
+            <span class="mobile-chip-year">2020</span>
+          </div>
+          <div class="mobile-chip-devices">💻📲</div>
+          <div class="mobile-chip-details">
+            5nm TSMC • 8-core CPU (4P+4E) • 7/8-core GPU<br>
+            MacBook Air/Pro, Mac mini, iMac, iPad Pro
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">M1 Pro/Max/Ultra</span>
+            <span class="mobile-chip-year">2021</span>
+          </div>
+          <div class="mobile-chip-devices">💻📲</div>
+          <div class="mobile-chip-details">
+            Pro: 10-core CPU, 16-core GPU<br>
+            Max: 10-core CPU, 32-core GPU<br>
+            Ultra: 20-core CPU, 64-core GPU
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">M2</span>
+            <span class="mobile-chip-year">2022</span>
+          </div>
+          <div class="mobile-chip-devices">💻📲🥽</div>
+          <div class="mobile-chip-details">
+            5nm TSMC Enhanced • 8-core CPU • 10-core GPU<br>
+            MacBook Air/Pro, Mac mini, iPad Pro, Vision Pro
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">M3</span>
+            <span class="mobile-chip-year">2023</span>
+          </div>
+          <div class="mobile-chip-devices">💻</div>
+          <div class="mobile-chip-details">
+            3nm TSMC • Dynamic Caching • Hardware Ray Tracing<br>
+            MacBook Pro, iMac
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">M3 Pro/Max</span>
+            <span class="mobile-chip-year">2024</span>
+          </div>
+          <div class="mobile-chip-devices">💻</div>
+          <div class="mobile-chip-details">
+            Pro: 12-core CPU • Max: 16-core CPU<br>
+            MacBook Pro 14"/16"
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">M3 Ultra / M4</span>
+            <span class="mobile-chip-year">2025</span>
+          </div>
+          <div class="mobile-chip-devices">💻📲</div>
+          <div class="mobile-chip-details">
+            M3 Ultra: 32-core CPU, 80-core GPU (Mac Studio)<br>
+            M4: Next-gen chip (MacBook Air refresh)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series S Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series S - Apple Watch</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">S1</span>
+            <span class="mobile-chip-year">2015</span>
+          </div>
+          <div class="mobile-chip-devices">⌚</div>
+          <div class="mobile-chip-details">
+            28nm Samsung • 520 MHz ARM Cortex-A7<br>
+            Apple Watch Series 1
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">S9</span>
+            <span class="mobile-chip-year">2023</span>
+          </div>
+          <div class="mobile-chip-devices">⌚</div>
+          <div class="mobile-chip-details">
+            4-core Neural Engine • On-device Siri • Double Tap<br>
+            Apple Watch Series 9
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">S10</span>
+            <span class="mobile-chip-year">2025</span>
+          </div>
+          <div class="mobile-chip-devices">⌚</div>
+          <div class="mobile-chip-details">
+            Enhanced health sensors • Improved battery<br>
+            Apple Watch Series 11
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series H Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series H - Headphones</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">H1</span>
+            <span class="mobile-chip-year">2019</span>
+          </div>
+          <div class="mobile-chip-devices">🎧</div>
+          <div class="mobile-chip-details">
+            10 audio cores • Real-time noise cancellation<br>
+            AirPods Pro, AirPods Max
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">H2</span>
+            <span class="mobile-chip-year">2022</span>
+          </div>
+          <div class="mobile-chip-devices">🎧</div>
+          <div class="mobile-chip-details">
+            Advanced computational audio • 2x better ANC<br>
+            AirPods Pro 2
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">H3</span>
+            <span class="mobile-chip-year">2025</span>
+          </div>
+          <div class="mobile-chip-devices">🎧</div>
+          <div class="mobile-chip-details">
+            Lossless audio support • Enhanced spatial audio<br>
+            AirPods Pro 3
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series U Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series U - Ultra Wideband</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">U1</span>
+            <span class="mobile-chip-year">2019</span>
+          </div>
+          <div class="mobile-chip-devices">📱⌚🏷️🔊</div>
+          <div class="mobile-chip-details">
+            Ultra Wideband • Spatial awareness • Precision Finding<br>
+            iPhone 11+, Apple Watch, AirTag, HomePod
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">U2</span>
+            <span class="mobile-chip-year">2023</span>
+          </div>
+          <div class="mobile-chip-devices">📱⌚🏷️</div>
+          <div class="mobile-chip-details">
+            3x range of U1 • Lower power consumption<br>
+            iPhone 15+, Apple Watch Series 9+, AirTag
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series W Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series W - Wireless</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">W1</span>
+            <span class="mobile-chip-year">2016</span>
+          </div>
+          <div class="mobile-chip-devices">🎧🎵</div>
+          <div class="mobile-chip-details">
+            First wireless chip • Class 1 Bluetooth<br>
+            AirPods 1, Beats headphones
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">W3</span>
+            <span class="mobile-chip-year">2018</span>
+          </div>
+          <div class="mobile-chip-devices">🎧⌚</div>
+          <div class="mobile-chip-details">
+            Hey Siri support • Lower latency<br>
+            AirPods 2, Apple Watch
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series N Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series N - Networking</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">N1</span>
+            <span class="mobile-chip-year">2025</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            First in-house wireless chip • Wi-Fi 7 • Bluetooth 6<br>
+            Thread protocol • Replaces Broadcom<br>
+            iPhone 17 series, iPhone Air
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series R Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series R - Reality</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">R1</span>
+            <span class="mobile-chip-year">2024</span>
+          </div>
+          <div class="mobile-chip-devices">🥽</div>
+          <div class="mobile-chip-details">
+            12ms photon-to-photon latency<br>
+            Sensor fusion processor<br>
+            Vision Pro exclusive
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series C Mobile -->
+    <div class="mobile-series">
+      <div class="mobile-series-header" onclick="toggleMobileSeries(this)" role="button" tabindex="0" aria-expanded="false">
+        <span>Series C - Cellular Modems</span>
+        <span class="mobile-series-toggle">▼</span>
+      </div>
+      <div class="mobile-series-content">
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">C1</span>
+            <span class="mobile-chip-year">Feb 2025</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            First custom Apple modem • 5G sub-6GHz only<br>
+            Better efficiency vs Qualcomm<br>
+            iPhone 16e (SE 4)
+          </div>
+        </div>
+        <div class="mobile-chip">
+          <div class="mobile-chip-header">
+            <span class="mobile-chip-name">C1X</span>
+            <span class="mobile-chip-year">Sept 2025</span>
+          </div>
+          <div class="mobile-chip-devices">📱</div>
+          <div class="mobile-chip-details">
+            2x faster than C1 (sub-6GHz)<br>
+            30% better efficiency than Qualcomm X75<br>
+            iPhone Air exclusive
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================
+       LEGEND : Légende des emojis
+       ============================================ -->
+  <div class="legend" role="list" aria-label="Légende des devices Apple">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">📱</span>
       <span class="legend-text">iPhone</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">📲</span>
       <span class="legend-text">iPad</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">🎵</span>
       <span class="legend-text">iPod Touch</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">💻</span>
       <span class="legend-text">Mac</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">📺</span>
       <span class="legend-text">Apple TV</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">🔊</span>
       <span class="legend-text">HomePod</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">⌚</span>
       <span class="legend-text">Apple Watch</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">🎧</span>
       <span class="legend-text">AirPods/Beats</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">🏷️</span>
       <span class="legend-text">AirTag</span>
     </div>
-    <div class="legend-item">
+    <div class="legend-item" role="listitem">
       <span class="legend-emoji">🥽</span>
       <span class="legend-text">Vision Pro</span>
     </div>
@@ -1001,7 +1544,10 @@ Vision Pro exclusive">
 
   <hr>
 
-  <div class="references">
+  <!-- ============================================
+       REFERENCES : Bibliographie
+       ============================================ -->
+  <div class="references" role="region" aria-label="Références bibliographiques">
     <h3>References (as of 2025-09-17)</h3>
     <ul>
       <li>APPLE.FANDOM.COM – Technical details on A-series SoCs</li>
@@ -1021,31 +1567,113 @@ Vision Pro exclusive">
     </ul>
   </div>
 
+  <!-- ============================================
+       JAVASCRIPT : Tooltips + Mobile interactions
+       ============================================ -->
   <script>
-// Système de tooltips dynamiques amélioré
-document.addEventListener('DOMContentLoaded', function() {
-  const cells = document.querySelectorAll('.cell[data-tooltip]');
-  let currentTooltip = null;
-  
-  cells.forEach(cell => {
-    cell.addEventListener('mouseenter', function(e) {
-      if (currentTooltip) {
-        currentTooltip.remove();
-        currentTooltip = null;
-      }
+  /**
+   * ========================================
+   * FONCTION UTILITAIRE : Debounce
+   * ========================================
+   * Limite l'exécution d'une fonction durant des événements fréquents
+   * @param {Function} func - Fonction à exécuter
+   * @param {Number} wait - Délai en millisecondes
+   * @returns {Function} - Fonction debounced
+   */
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  /**
+   * ========================================
+   * SYSTÈME DE TOOLTIPS ADAPTATIF
+   * ========================================
+   * Gère les tooltips avec support desktop (hover) et mobile (touch)
+   */
+  document.addEventListener('DOMContentLoaded', function() {
+    const cells = document.querySelectorAll('.cell[data-tooltip]');
+    let currentTooltip = null;
+    
+    // Détection du type d'appareil
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    cells.forEach(cell => {
       
-      const tooltipText = this.getAttribute('data-tooltip');
+      if (isTouchDevice) {
+        // ========================================
+        // MODE MOBILE : Touch events
+        // ========================================
+        cell.addEventListener('touchstart', function(e) {
+          e.preventDefault(); // Empêche le scroll accidentel
+          
+          // Si on re-touche la même cellule, ferme le tooltip
+          if (currentTooltip && currentTooltip.sourceCell === this) {
+            currentTooltip.remove();
+            currentTooltip = null;
+            return;
+          }
+          
+          // Ferme le tooltip précédent s'il existe
+          if (currentTooltip) {
+            currentTooltip.remove();
+          }
+          
+          // Affiche le nouveau tooltip
+          showTooltip(this, e.touches[0]);
+        });
+        
+      } else {
+        // ========================================
+        // MODE DESKTOP : Hover classique
+        // ========================================
+        cell.addEventListener('mouseenter', function(e) {
+          if (currentTooltip) {
+            currentTooltip.remove();
+          }
+          showTooltip(this, e);
+        });
+        
+        cell.addEventListener('mouseleave', function() {
+          if (currentTooltip) {
+            currentTooltip.classList.remove('visible');
+            setTimeout(() => {
+              if (currentTooltip) {
+                currentTooltip.remove();
+                currentTooltip = null;
+              }
+            }, 300);
+          }
+        });
+      }
+    });
+    
+    /**
+     * Fonction unifiée pour créer et afficher un tooltip
+     * @param {HTMLElement} cell - Cellule source du tooltip
+     * @param {MouseEvent|Touch} event - Événement mouse ou touch
+     */
+    function showTooltip(cell, event) {
+      const tooltipText = cell.getAttribute('data-tooltip');
       if (!tooltipText) return;
       
+      // Création du tooltip
       const tooltip = document.createElement('div');
       tooltip.className = 'dynamic-tooltip';
-      // Remplace &#10; par de vrais retours à la ligne
+      tooltip.setAttribute('role', 'tooltip');
       tooltip.innerHTML = tooltipText.replace(/&#10;/g, '<br>').replace(/\n/g, '<br>');
+      tooltip.sourceCell = cell; // Référence pour savoir quelle cellule l'a créé
       document.body.appendChild(tooltip);
       
-      const rect = this.getBoundingClientRect();
-      
-      // Calcul de position initial
+      // Calcul de la position
+      const rect = cell.getBoundingClientRect();
       let top = rect.bottom + window.scrollY + 10;
       let left = rect.left + window.scrollX + (rect.width / 2);
       
@@ -1057,11 +1685,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (left + tooltipRect.width > window.innerWidth - 20) {
         left = window.innerWidth - tooltipRect.width - 20;
       }
-      
       if (left < 20) {
         left = 20;
       }
-      
       if (top + tooltipRect.height > window.innerHeight + window.scrollY - 20) {
         top = rect.top + window.scrollY - tooltipRect.height - 10;
       }
@@ -1069,34 +1695,69 @@ document.addEventListener('DOMContentLoaded', function() {
       tooltip.style.top = top + 'px';
       tooltip.style.left = left + 'px';
       
+      // Animation d'apparition
       setTimeout(() => {
         tooltip.classList.add('visible');
       }, 10);
       
       currentTooltip = tooltip;
-    });
-    
-    cell.addEventListener('mouseleave', function() {
-      if (currentTooltip) {
-        currentTooltip.classList.remove('visible');
-        setTimeout(() => {
-          if (currentTooltip) {
-            currentTooltip.remove();
-            currentTooltip = null;
-          }
-        }, 300);
-      }
-    });
-  });
-  
-  // Nettoie au scroll
-  window.addEventListener('scroll', function() {
-    if (currentTooltip) {
-      currentTooltip.remove();
-      currentTooltip = null;
     }
+    
+    // ========================================
+    // FERMETURE AUTO : Touch ailleurs (mobile)
+    // ========================================
+    if (isTouchDevice) {
+      document.addEventListener('touchstart', function(e) {
+        if (currentTooltip && !e.target.closest('.cell[data-tooltip]')) {
+          currentTooltip.remove();
+          currentTooltip = null;
+        }
+      });
+    }
+    
+    // ========================================
+    // FERMETURE AU SCROLL (desktop + mobile)
+    // ========================================
+    window.addEventListener('scroll', debounce(function() {
+      if (currentTooltip) {
+        currentTooltip.remove();
+        currentTooltip = null;
+      }
+    }, 100)); // Exécute max 1x toutes les 100ms
   });
-});
+
+  /**
+   * ========================================
+   * VUE MOBILE : Toggle des accordéons
+   * ========================================
+   * Gère l'ouverture/fermeture des séries sur mobile
+   * @param {HTMLElement} header - Header cliqué
+   */
+  function toggleMobileSeries(header) {
+    const content = header.nextElementSibling;
+    const toggle = header.querySelector('.mobile-series-toggle');
+    const isExpanded = header.classList.contains('expanded');
+    
+    // Toggle état
+    header.classList.toggle('expanded');
+    content.classList.toggle('expanded');
+    
+    // Mise à jour ARIA
+    header.setAttribute('aria-expanded', !isExpanded);
+  }
+
+  // Support du clavier pour les accordéons
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileHeaders = document.querySelectorAll('.mobile-series-header');
+    mobileHeaders.forEach(header => {
+      header.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleMobileSeries(this);
+        }
+      });
+    });
+  });
   </script>
 </body>
 </html>
