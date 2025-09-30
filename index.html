@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
       "name": "Paul Dewost"
     },
     "datePublished": "2025-09-17",
-    "inLanguage": "fr-FR"
+    "inLanguage": "en-US"
   }
   </script>
   
@@ -277,13 +277,27 @@
     .legend {
       margin: 30px auto;
       padding: 24px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
       max-width: 900px;
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    /* Titre de la légende */
+    .legend-title {
+      text-align: center;
+      font-size: 1.3em;
+      color: #1a1a2e;
+      margin-bottom: 20px;
+      margin-top: 0;
+      font-weight: 700;
+    }
+    
+    /* Container des items de légende */
+    .legend-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
     }
     
     .legend-item {
@@ -315,6 +329,125 @@
     }
 
     /* ============================================
+       DEVICE TOOLTIP : Tooltip spécial pour devices
+       ============================================ */
+    .legend-item[data-device] {
+      cursor: pointer;
+      position: relative;
+    }
+
+    .legend-item[data-device]::after {
+      content: "ℹ️";
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .legend-item[data-device]:hover::after {
+      opacity: 0.6;
+    }
+
+    .device-tooltip {
+      position: fixed;
+      background: linear-gradient(135deg, rgba(26,26,46,0.98) 0%, rgba(15,15,15,0.98) 100%);
+      color: white;
+      padding: 20px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1001;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .device-tooltip.visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .device-tooltip-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .device-tooltip-emoji {
+      font-size: 28px;
+    }
+
+    .device-tooltip-series {
+      margin-bottom: 16px;
+    }
+
+    .device-tooltip-series:last-child {
+      margin-bottom: 0;
+    }
+
+    .device-tooltip-series-name {
+      font-weight: 700;
+      color: #4A9EFF;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .device-tooltip-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-left: 8px;
+    }
+
+    .device-tooltip-chip {
+      background: rgba(74, 158, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      border: 1px solid rgba(74, 158, 255, 0.3);
+      white-space: nowrap;
+    }
+
+    .device-tooltip-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      transition: all 0.2s;
+      pointer-events: auto;
+    }
+
+    .device-tooltip-close:hover {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    /* ============================================
        REFERENCES : Section bibliographique
        ============================================ */
     .references {
@@ -327,17 +460,14 @@
       font-size: 14px;
       line-height: 1.6;
     }
-
-    .references h2 {
-    margin-bottom: 16px;
-    color: #1a1a2e;
-    font-size: 1.2em;
-    }
     
-    .references h3 {
+    /* Style pour h2 */
+    .references h2 {
+      margin-top: 0;
       margin-bottom: 16px;
       color: #1a1a2e;
       font-size: 1.2em;
+      font-weight: 700;
     }
     
     .references ul {
@@ -528,8 +658,16 @@
       }
       
       .legend {
-        grid-template-columns: repeat(2, 1fr);
         padding: 16px;
+      }
+      
+      .legend-title {
+        font-size: 1.2em;
+        margin-bottom: 16px;
+      }
+      
+      .legend-items {
+        grid-template-columns: repeat(2, 1fr);
       }
       
       .legend-item {
@@ -547,6 +685,23 @@
       .references {
         padding: 16px;
         font-size: 13px;
+      }
+      
+      /* Device tooltip responsive */
+      .device-tooltip {
+        max-width: calc(100vw - 40px);
+        max-height: 70vh;
+        font-size: 13px;
+        padding: 16px 20px;
+      }
+      
+      .device-tooltip-header {
+        font-size: 16px;
+      }
+      
+      .device-tooltip-chip {
+        font-size: 12px;
+        padding: 3px 8px;
       }
     }
     
@@ -594,6 +749,10 @@
         color: #a0a0a0;
       }
       
+      .legend-title {
+        color: #f0f0f0;
+      }
+      
       .legend-item {
         background: #3d3d40;
       }
@@ -606,7 +765,7 @@
         color: #b0b0b0;
       }
       
-      .references h3 {
+      .references h2 {
         color: #f0f0f0;
       }
       
@@ -624,6 +783,10 @@
       
       .mobile-chip-details {
         color: #b0b0b0;
+      }
+      
+      .device-tooltip {
+        background: linear-gradient(135deg, rgba(45,45,48,0.98) 0%, rgba(30,30,30,0.98) 100%);
       }
     }
     
@@ -647,7 +810,7 @@
   <!-- Avertissement si JavaScript désactivé -->
   <noscript>
     <div class="noscript-warning" role="alert">
-      ⚠️ JavaScript est requis pour les tooltips interactifs et la vue mobile optimisée. Veuillez l'activer pour une meilleure expérience.
+      JavaScript is required for interactive tooltips and optimized mobile view. Please enable it for a better experience.
     </div>
   </noscript>
 
@@ -656,7 +819,7 @@
   <!-- ============================================
        VUE DESKTOP : Timeline horizontale scrollable
        ============================================ -->
-  <div class="timeline-wrapper" role="table" aria-label="Timeline des processeurs Apple de 2010 à 2025">
+  <div class="timeline-wrapper" role="table" aria-label="Timeline of Apple processors from 2010 to 2025">
     <div class="timeline-container">
       <!-- Header avec années -->
       <div class="header-row" role="row">
@@ -1007,7 +1170,7 @@
   <!-- ============================================
        VUE MOBILE : Accordéons verticaux
        ============================================ -->
-  <div class="mobile-view" role="region" aria-label="Vue mobile de la timeline Apple Silicon">
+  <div class="mobile-view" role="region" aria-label="Mobile view of Apple Silicon timeline">
     
     <!-- Series A Mobile -->
     <div class="mobile-series">
@@ -1505,46 +1668,49 @@
   <!-- ============================================
        LEGEND : Légende des emojis
        ============================================ -->
-  <div class="legend" role="list" aria-label="Légende des devices Apple">
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">📱</span>
-      <span class="legend-text">iPhone</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">📲</span>
-      <span class="legend-text">iPad</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">🎵</span>
-      <span class="legend-text">iPod Touch</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">💻</span>
-      <span class="legend-text">Mac</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">📺</span>
-      <span class="legend-text">Apple TV</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">🔊</span>
-      <span class="legend-text">HomePod</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">⌚</span>
-      <span class="legend-text">Apple Watch</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">🎧</span>
-      <span class="legend-text">AirPods/Beats</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">🏷️</span>
-      <span class="legend-text">AirTag</span>
-    </div>
-    <div class="legend-item" role="listitem">
-      <span class="legend-emoji">🥽</span>
-      <span class="legend-text">Vision Pro</span>
+  <div class="legend" role="region" aria-label="Device legend section">
+    <h2 class="legend-title">Device Legend</h2>
+    <div class="legend-items" role="list" aria-label="List of Apple devices">
+      <div class="legend-item" role="listitem" data-device="📱">
+        <span class="legend-emoji">📱</span>
+        <span class="legend-text">iPhone</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="📲">
+        <span class="legend-emoji">📲</span>
+        <span class="legend-text">iPad</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="🎵">
+        <span class="legend-emoji">🎵</span>
+        <span class="legend-text">iPod Touch</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="💻">
+        <span class="legend-emoji">💻</span>
+        <span class="legend-text">Mac</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="📺">
+        <span class="legend-emoji">📺</span>
+        <span class="legend-text">Apple TV</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="🔊">
+        <span class="legend-emoji">🔊</span>
+        <span class="legend-text">HomePod</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="⌚">
+        <span class="legend-emoji">⌚</span>
+        <span class="legend-text">Apple Watch</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="🎧">
+        <span class="legend-emoji">🎧</span>
+        <span class="legend-text">AirPods/Beats</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="🏷️">
+        <span class="legend-emoji">🏷️</span>
+        <span class="legend-text">AirTag</span>
+      </div>
+      <div class="legend-item" role="listitem" data-device="🥽">
+        <span class="legend-emoji">🥽</span>
+        <span class="legend-text">Vision Pro</span>
+      </div>
     </div>
   </div>
 
@@ -1553,7 +1719,7 @@
   <!-- ============================================
        REFERENCES : Bibliographie
        ============================================ -->
-  <div class="references" role="region" aria-label="Références bibliographiques">
+  <div class="references" role="region" aria-label="Bibliographic references">
     <h2>References (as of 2025-09-17)</h2>
     <ul>
       <li>APPLE.FANDOM.COM – Technical details on A-series SoCs</li>
@@ -1574,17 +1740,13 @@
   </div>
 
   <!-- ============================================
-       JAVASCRIPT : Tooltips + Mobile interactions
+       JAVASCRIPT : Tooltips + Mobile + Device tooltips
        ============================================ -->
   <script>
   /**
    * ========================================
    * FONCTION UTILITAIRE : Debounce
    * ========================================
-   * Limite l'exécution d'une fonction durant des événements fréquents
-   * @param {Function} func - Fonction à exécuter
-   * @param {Number} wait - Délai en millisecondes
-   * @returns {Function} - Fonction debounced
    */
   function debounce(func, wait) {
     let timeout;
@@ -1602,44 +1764,33 @@
    * ========================================
    * SYSTÈME DE TOOLTIPS ADAPTATIF
    * ========================================
-   * Gère les tooltips avec support desktop (hover) et mobile (touch)
    */
   document.addEventListener('DOMContentLoaded', function() {
     const cells = document.querySelectorAll('.cell[data-tooltip]');
     let currentTooltip = null;
     
-    // Détection du type d'appareil
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
     cells.forEach(cell => {
       
       if (isTouchDevice) {
-        // ========================================
-        // MODE MOBILE : Touch events
-        // ========================================
         cell.addEventListener('touchstart', function(e) {
-          e.preventDefault(); // Empêche le scroll accidentel
+          e.preventDefault();
           
-          // Si on re-touche la même cellule, ferme le tooltip
           if (currentTooltip && currentTooltip.sourceCell === this) {
             currentTooltip.remove();
             currentTooltip = null;
             return;
           }
           
-          // Ferme le tooltip précédent s'il existe
           if (currentTooltip) {
             currentTooltip.remove();
           }
           
-          // Affiche le nouveau tooltip
           showTooltip(this, e.touches[0]);
         });
         
       } else {
-        // ========================================
-        // MODE DESKTOP : Hover classique
-        // ========================================
         cell.addEventListener('mouseenter', function(e) {
           if (currentTooltip) {
             currentTooltip.remove();
@@ -1661,33 +1812,24 @@
       }
     });
     
-    /**
-     * Fonction unifiée pour créer et afficher un tooltip
-     * @param {HTMLElement} cell - Cellule source du tooltip
-     * @param {MouseEvent|Touch} event - Événement mouse ou touch
-     */
     function showTooltip(cell, event) {
       const tooltipText = cell.getAttribute('data-tooltip');
       if (!tooltipText) return;
       
-      // Création du tooltip
       const tooltip = document.createElement('div');
       tooltip.className = 'dynamic-tooltip';
       tooltip.setAttribute('role', 'tooltip');
       tooltip.innerHTML = tooltipText.replace(/&#10;/g, '<br>').replace(/\n/g, '<br>');
-      tooltip.sourceCell = cell; // Référence pour savoir quelle cellule l'a créé
+      tooltip.sourceCell = cell;
       document.body.appendChild(tooltip);
       
-      // Calcul de la position
       const rect = cell.getBoundingClientRect();
       let top = rect.bottom + window.scrollY + 10;
       let left = rect.left + window.scrollX + (rect.width / 2);
       
-      // Force le calcul des dimensions après ajout au DOM
       const tooltipRect = tooltip.getBoundingClientRect();
       left -= (tooltipRect.width / 2);
       
-      // Ajustements pour rester dans la fenêtre
       if (left + tooltipRect.width > window.innerWidth - 20) {
         left = window.innerWidth - tooltipRect.width - 20;
       }
@@ -1701,7 +1843,6 @@
       tooltip.style.top = top + 'px';
       tooltip.style.left = left + 'px';
       
-      // Animation d'apparition
       setTimeout(() => {
         tooltip.classList.add('visible');
       }, 10);
@@ -1709,9 +1850,6 @@
       currentTooltip = tooltip;
     }
     
-    // ========================================
-    // FERMETURE AUTO : Touch ailleurs (mobile)
-    // ========================================
     if (isTouchDevice) {
       document.addEventListener('touchstart', function(e) {
         if (currentTooltip && !e.target.closest('.cell[data-tooltip]')) {
@@ -1721,38 +1859,29 @@
       });
     }
     
-    // ========================================
-    // FERMETURE AU SCROLL (desktop + mobile)
-    // ========================================
     window.addEventListener('scroll', debounce(function() {
       if (currentTooltip) {
         currentTooltip.remove();
         currentTooltip = null;
       }
-    }, 100)); // Exécute max 1x toutes les 100ms
+    }, 100));
   });
 
   /**
    * ========================================
    * VUE MOBILE : Toggle des accordéons
    * ========================================
-   * Gère l'ouverture/fermeture des séries sur mobile
-   * @param {HTMLElement} header - Header cliqué
    */
   function toggleMobileSeries(header) {
     const content = header.nextElementSibling;
-    const toggle = header.querySelector('.mobile-series-toggle');
     const isExpanded = header.classList.contains('expanded');
     
-    // Toggle état
     header.classList.toggle('expanded');
     content.classList.toggle('expanded');
     
-    // Mise à jour ARIA
     header.setAttribute('aria-expanded', !isExpanded);
   }
 
-  // Support du clavier pour les accordéons
   document.addEventListener('DOMContentLoaded', function() {
     const mobileHeaders = document.querySelectorAll('.mobile-series-header');
     mobileHeaders.forEach(header => {
@@ -1762,6 +1891,196 @@
           toggleMobileSeries(this);
         }
       });
+    });
+  });
+
+  /**
+   * ========================================
+   * DEVICE TOOLTIPS : Tooltips sur les devices
+   * ========================================
+   */
+  document.addEventListener('DOMContentLoaded', function() {
+    const deviceChipsMap = {};
+    
+    document.querySelectorAll('.rows .row').forEach(row => {
+      const seriesName = row.querySelector('.first-col strong')?.textContent || 
+                         row.querySelector('.first-col')?.textContent.trim();
+      
+      if (!seriesName) return;
+      
+      row.querySelectorAll('.cell:not(.first-col)').forEach((cell, index) => {
+        const chipName = cell.querySelector('.chip-name')?.textContent.trim();
+        const devices = cell.querySelector('.chip-devices')?.textContent.trim();
+        const year = 2010 + index;
+        
+        if (chipName && devices) {
+          for (const device of devices) {
+            if (!deviceChipsMap[device]) {
+              deviceChipsMap[device] = {};
+            }
+            if (!deviceChipsMap[device][seriesName]) {
+              deviceChipsMap[device][seriesName] = [];
+            }
+            
+            const existing = deviceChipsMap[device][seriesName].find(c => c.name === chipName);
+            if (!existing) {
+              deviceChipsMap[device][seriesName].push({
+                name: chipName,
+                year: year
+              });
+            } else {
+              existing.yearEnd = year;
+            }
+          }
+        }
+      });
+    });
+    
+    let currentDeviceTooltip = null;
+    
+    document.querySelectorAll('.legend-item[data-device]').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        const device = this.getAttribute('data-device');
+        const deviceName = this.querySelector('.legend-text').textContent;
+        
+        if (currentDeviceTooltip && currentDeviceTooltip.dataset.device === device) {
+          closeDeviceTooltip();
+          return;
+        }
+        
+        if (currentDeviceTooltip) {
+          closeDeviceTooltip();
+        }
+        
+        showDeviceTooltip(device, deviceName, this);
+      });
+    });
+    
+    function showDeviceTooltip(device, deviceName, element) {
+      const chips = deviceChipsMap[device];
+      
+      if (!chips || Object.keys(chips).length === 0) {
+        return;
+      }
+      
+      const tooltip = document.createElement('div');
+      tooltip.className = 'device-tooltip';
+      tooltip.dataset.device = device;
+      tooltip.setAttribute('role', 'dialog');
+      tooltip.setAttribute('aria-label', `${deviceName} processors timeline`);
+      
+      let minYear = Infinity;
+      let maxYear = -Infinity;
+      Object.values(chips).forEach(seriesChips => {
+        seriesChips.forEach(chip => {
+          minYear = Math.min(minYear, chip.year);
+          maxYear = Math.max(maxYear, chip.yearEnd || chip.year);
+        });
+      });
+      
+      const header = document.createElement('div');
+      header.className = 'device-tooltip-header';
+      header.innerHTML = `
+        <span class="device-tooltip-emoji">${device}</span>
+        <span>${deviceName} Processors (${minYear}-${maxYear})</span>
+      `;
+      tooltip.appendChild(header);
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'device-tooltip-close';
+      closeBtn.innerHTML = '×';
+      closeBtn.setAttribute('aria-label', 'Close tooltip');
+      closeBtn.onclick = closeDeviceTooltip;
+      tooltip.appendChild(closeBtn);
+      
+      Object.entries(chips).forEach(([seriesName, seriesChips]) => {
+        const seriesDiv = document.createElement('div');
+        seriesDiv.className = 'device-tooltip-series';
+        
+        const seriesTitle = document.createElement('div');
+        seriesTitle.className = 'device-tooltip-series-name';
+        seriesTitle.textContent = seriesName + ':';
+        seriesDiv.appendChild(seriesTitle);
+        
+        const chipsContainer = document.createElement('div');
+        chipsContainer.className = 'device-tooltip-chips';
+        
+        seriesChips.forEach(chip => {
+          const chipSpan = document.createElement('span');
+          chipSpan.className = 'device-tooltip-chip';
+          
+          if (chip.yearEnd && chip.yearEnd !== chip.year) {
+            chipSpan.textContent = `${chip.name} (${chip.year}-${chip.yearEnd})`;
+          } else {
+            chipSpan.textContent = `${chip.name} (${chip.year})`;
+          }
+          
+          chipsContainer.appendChild(chipSpan);
+        });
+        
+        seriesDiv.appendChild(chipsContainer);
+        tooltip.appendChild(seriesDiv);
+      });
+      
+      document.body.appendChild(tooltip);
+      
+      const rect = element.getBoundingClientRect();
+      let top = rect.bottom + window.scrollY + 10;
+      let left = rect.left + window.scrollX + (rect.width / 2);
+      
+      setTimeout(() => {
+        const tooltipRect = tooltip.getBoundingClientRect();
+        left -= (tooltipRect.width / 2);
+        
+        if (left + tooltipRect.width > window.innerWidth - 20) {
+          left = window.innerWidth - tooltipRect.width - 20;
+        }
+        if (left < 20) {
+          left = 20;
+        }
+        if (top + tooltipRect.height > window.innerHeight + window.scrollY - 20) {
+          top = rect.top + window.scrollY - tooltipRect.height - 10;
+        }
+        
+        tooltip.style.top = top + 'px';
+        tooltip.style.left = left + 'px';
+        
+        setTimeout(() => {
+          tooltip.classList.add('visible');
+        }, 10);
+      }, 10);
+      
+      currentDeviceTooltip = tooltip;
+    }
+    
+    function closeDeviceTooltip() {
+      if (currentDeviceTooltip) {
+        currentDeviceTooltip.classList.remove('visible');
+        setTimeout(() => {
+          if (currentDeviceTooltip) {
+            currentDeviceTooltip.remove();
+            currentDeviceTooltip = null;
+          }
+        }, 300);
+      }
+    }
+    
+    document.addEventListener('click', function(e) {
+      if (currentDeviceTooltip && 
+          !e.target.closest('.device-tooltip') && 
+          !e.target.closest('.legend-item[data-device]')) {
+        closeDeviceTooltip();
+      }
+    });
+    
+    window.addEventListener('scroll', debounce(closeDeviceTooltip, 100));
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && currentDeviceTooltip) {
+        closeDeviceTooltip();
+      }
     });
   });
   </script>
